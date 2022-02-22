@@ -179,3 +179,4 @@ ERROR - 2022-02-22 15:06:11 --> 404 Page Not Found: App_assets/vendors
 ERROR - 2022-02-22 15:06:13 --> 404 Page Not Found: App_assets/vendors
 ERROR - 2022-02-22 15:09:05 --> 404 Page Not Found: App_assets/vendors
 ERROR - 2022-02-22 15:09:10 --> 404 Page Not Found: App_assets/vendors
+ERROR - 2022-02-22 16:19:20 --> 404 Page Not Found: A/index
