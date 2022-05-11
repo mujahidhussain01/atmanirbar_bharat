@@ -108,7 +108,11 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Processing Fee</th>
-                                                    <td><?= ($loan['loan_panelty_amount'] ? '₹ ' . $loan['loan_panelty_amount'] : 'NA') ?></td>
+                                                    <td>₹<?= $loan['processing_fee'] ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Deduct 1% LIC Amount</th>
+                                                    <td><?= $loan['deduct_lic_amount'] ?></td>
                                                 </tr>
                                                 <tr>
                                                     <th>Loan Closer Amount</th>

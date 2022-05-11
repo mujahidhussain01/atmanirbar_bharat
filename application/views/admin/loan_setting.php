@@ -1,6 +1,6 @@
-<?php include "common/header.php"?>
+<?php include "common/header.php" ?>
 
-<?php include "common/sidebar.php"?>
+<?php include "common/sidebar.php" ?>
 
 <div id="content" class="content">
 
@@ -14,17 +14,17 @@
 
 	<h1 class="page-header">Loan Settings</h1>
 
-	<?php if($suc=$this->session->flashdata('success')) {?>
+	<?php if ($suc = $this->session->flashdata('success')) { ?>
 
-	<div class="alert alert-success" ><?php echo $suc?></div>
+		<div class="alert alert-success"><?php echo $suc ?></div>
 
-	<?php }?>
+	<?php } ?>
 
-	<?php if($fail=$this->session->flashdata('error')) {?>
+	<?php if ($fail = $this->session->flashdata('error')) { ?>
 
-	<div class="alert alert-danger" ><?php echo $fail?></div>
+		<div class="alert alert-danger"><?php echo $fail ?></div>
 
-	<?php }?>
+	<?php } ?>
 
 	<div id="add_loan_setting" class="panel panel-inverse">
 
@@ -36,13 +36,13 @@
 
 		<div class="panel-body">
 
-			<form action="<?php echo base_url()?>admin/settings/loan_setting" method="post" class="margin-bottom-0">
+			<form action="<?php echo base_url() ?>admin/settings/loan_setting" method="post" class="margin-bottom-0">
 
 				<div class="form-row">
 
 					<div class="col-md-6 form-group m-b-15 ">
 
-						<label>Loan Name:</label>	
+						<label>Loan Name:</label>
 
 						<input type="text" minlenght="2" maxlength="100" class="form-control form-control-md" placeholder="Loan Name" required name="loan_name" id='loan_name'>
 
@@ -50,10 +50,10 @@
 
 					</div>
 
-					
+
 					<div class="col-md-6 form-group m-b-15 ">
 
-						<label>Amount:</label>	
+						<label>Amount:</label>
 
 						<input type="number" step="1" class="form-control form-control-md" placeholder="Amount" required name="amt" id='loan_amount' min="0" step="1">
 
@@ -61,7 +61,7 @@
 
 					</div>
 
-										
+
 					<div class="form-group m-b-15 col-md-6">
 
 						<label>Rate Of Interest ( in % ) :</label>
@@ -128,10 +128,31 @@
 
 					</div>
 
-					
+
 					<div class="form-group m-b-15 col-md-6">
 
-						<label>Emi Amount:</label>
+						<label>Processing fee:</label>
+
+						<input type="number" step="1" class="form-control form-control-md" placeholder="Processing fees" readonly required name="processing_fee" min="1" id='process_fee_value'>
+
+						<?php echo form_error('process_fee', '<p class="alert alert-danger" role="alert">', '</p>'); ?>
+
+					</div>
+
+					<div class="form-group m-b-15 col-md-6">
+
+						<label>Payable Amount:</label>
+
+						<input type="number" step="any" class="form-control form-control-md" placeholder="Payable Amount" id='payable_amount' readonly>
+
+
+					</div>
+
+					<hr class="col-12">
+
+					<div class="form-group m-b-15 col-md-6">
+
+						<label>Emi Amount: <span class="emiCountShow" ></span></label>
 
 						<input type="number" step="any" class="form-control form-control-md" placeholder="Emi Amount" required name="emi_amount" id='emi_amount' readonly>
 
@@ -141,11 +162,32 @@
 
 					<div class="form-group m-b-15 col-md-6">
 
-						<label>Processing fee:</label>
+						<label>Final Loan Amount:</label>
 
-						<input type="number" step="1" class="form-control form-control-md" placeholder="Processing fees" readonly required name="processing_fee" min="1" id='process_fee_value'>
+						<input type="number" step="any" class="form-control form-control-md" placeholder="Final Loan Amount" id='final_loan_amount' readonly>
 
-						<?php echo form_error('process_fee', '<p class="alert alert-danger" role="alert">', '</p>'); ?>
+					</div>
+
+
+
+					<hr class="col-12">
+
+
+					<div class="form-group m-b-15 col-md-6">
+
+						<label>Emi Amount ( With LIC Deduction ): <span class="emiCountShow" ></span></label>
+
+						<input type="number" step="any" class="form-control form-control-md" placeholder="Emi Amount ( With LIC Deduction )" id='emi_amount_with_lic' readonly>
+
+					</div>
+
+
+					<div class="form-group m-b-15 col-md-6">
+
+						<label>Final Loan Amount ( With LIC Deduction ):</label>
+
+						<input type="number" step="any" class="form-control form-control-md" placeholder="Final Loan Amount ( With LIC Deduction )" id='final_loan_amount_with_lic' readonly>
+
 
 					</div>
 
@@ -158,11 +200,11 @@
 
 				</div>
 
-				
+
 
 			</form>
 
-			
+
 
 		</div>
 
@@ -192,100 +234,102 @@
 
 			<div class="panel-heading-btn">
 
-			
+
+
+			</div>
 
 		</div>
 
-	</div>
+
+
+		<div class="panel-body">
+
+			<div class="table-responsive">
 
 
 
-	<div class="panel-body">
+				<table id="data-table-buttons" class="table table-bordered table-centered table-nowrap">
 
-		<div class="table-responsive">
+					<thead>
 
+						<tr>
 
+							<th>S.no</th>
 
-			<table id="data-table-buttons"  class="table table-bordered table-centered table-nowrap">
+							<th data-toggle='tooltip' data-placement="top" title='Loan Name'>Loan Name</th>
 
-				<thead>
+							<th data-toggle='tooltip' data-placement="top" title='Loan Duration ( in days )'>Loan Duration</th>
 
-					<tr>
+							<th data-toggle='tooltip' data-placement="top" title='Amount paid to the user'>Loan Amount</th>
 
-						<th>S.no</th>
+							<th data-toggle='tooltip' data-placement="top" title='Rate of Interest over Loan amount'>Rate Of Interest</th>
 
-						<th data-toggle='tooltip' data-placement="top" title='Loan Name'>Loan Name</th>
+							<th data-toggle='tooltip' data-placement="top" title='Processing fee is over Loan amount'>Processing fees (In %)</th>
 
-						<th data-toggle='tooltip' data-placement="top" title='Loan Duration ( in days )'>Loan Duration</th>
-						
-						<th data-toggle='tooltip' data-placement="top" title='Amount paid to the user'>Loan Amount</th>
-						
-						<th data-toggle='tooltip' data-placement="top" title='Rate of Interest over Loan amount'>Rate Of Interest</th>
-						
-						<th data-toggle='tooltip' data-placement="top" title='Processing fee is over Loan amount'>Processing fees (In %)</th>
+							<th data-toggle='tooltip' data-placement="top" title='Calculated processing fee (in rs)'>Processing fees (in Rs)</th>
 
-						<th data-toggle='tooltip' data-placement="top" title='Calculated processing fee (in rs)'>Processing fees (in Rs)</th>
-						
-						<th data-toggle='tooltip' data-placement="top" title='Payment Mode'>Payment Mode</th>
-						
-						<th data-toggle='tooltip' data-placement="top" title='Emi Amount'>Emi Amount</th>
-						
-						<th data-toggle='tooltip' data-placement="top" title='Bouncing Charges ( in % )'>Bouncing Charges ( in % )</th>
-						
-						<th data-toggle='tooltip' data-placement="top" title='Bouncing Charges'>Bouncing Charges</th>
+							<th data-toggle='tooltip' data-placement="top" title='Payment Mode'>Payment Mode</th>
 
-						<th>Status</th>
+							<th data-toggle='tooltip' data-placement="top" title='Emi Amount'>Emi Amount</th>
 
-						<th>Actions</th>
+							<th data-toggle='tooltip' data-placement="top" title='Bouncing Charges ( in % )'>Bouncing Charges ( in % )</th>
 
-					</tr>
+							<th data-toggle='tooltip' data-placement="top" title='Bouncing Charges'>Bouncing Charges</th>
 
-				</thead>
+							<th>Status</th>
+
+							<th>Actions</th>
+
+						</tr>
+
+					</thead>
 
 
 
-				<tbody>
+					<tbody>
 
-				<?php $sno=0;?>
+						<?php $sno = 0; ?>
 
-				<?php foreach($data as $record){?>
+						<?php foreach ($data as $record) { ?>
 
-					<tr>
+							<tr>
 
-						<td><?php echo ++$sno ?></td>
+								<td><?php echo ++$sno ?></td>
 
-						<td><?php echo $record['loan_name']?></td>
+								<td><?php echo $record['loan_name'] ?></td>
 
-						<td><?php echo $record['loan_duration']?> Days</td>
-						
-						<td><?php echo "Rs.".$record['amount']?></td>
-						
-						<td><?php echo ($record['rate_of_interest']?$record['rate_of_interest']:0)."%"?></td>
-						
-						<td><?php echo ($record['process_fee_percent']?$record['process_fee_percent']:0)."%"?></td>
-						
-						<td><?php echo "Rs.".($record['processing_fee']?$record['processing_fee']:0)?></td>
-						
-						<td><?php echo $record['payment_mode']?></td>
+								<td><?php echo $record['loan_duration'] ?> Days</td>
 
-						<td>Rs.<?php echo $record['emi_amount']?></td>
+								<td><?php echo "Rs." . $record['amount'] ?></td>
 
-						<td><?php echo $record['bouncing_charges_percent']?>%</td>
+								<td><?php echo ($record['rate_of_interest'] ? $record['rate_of_interest'] : 0) . "%" ?></td>
 
-						<td>Rs.<?php echo $record['bouncing_charges']?></td>
+								<td><?php echo ($record['process_fee_percent'] ? $record['process_fee_percent'] : 0) . "%" ?></td>
+
+								<td><?php echo "Rs." . ($record['processing_fee'] ? $record['processing_fee'] : 0) ?></td>
+
+								<td><?php echo $record['payment_mode'] ?></td>
+
+								<td>Rs.<?php echo $record['emi_amount'] ?></td>
+
+								<td><?php echo $record['bouncing_charges_percent'] ?>%</td>
+
+								<td>Rs.<?php echo $record['bouncing_charges'] ?></td>
 
 
-						<td><button type="button" onclick="delete_loan_settings(<?php echo $record['lsid']?>,'<?=($record['ls_status'] == 'Active'?'Inactive':'Active')?>')" class="btn btn-sm btn-<?=($record['ls_status'] == 'Active'?'success':'danger')?>"><?php echo $record['ls_status']?></button></td>
+								<td><button type="button" onclick="delete_loan_settings(<?php echo $record['lsid'] ?>,'<?= ($record['ls_status'] == 'Active' ? 'Inactive' : 'Active') ?>')" class="btn btn-sm btn-<?= ($record['ls_status'] == 'Active' ? 'success' : 'danger') ?>"><?php echo $record['ls_status'] ?></button></td>
 
-						<td><button type="button" onclick="view_edit_modal(<?php echo $record['lsid']?>)" class="btn btn-sm btn-primary"><i class='fa fa-pen'></i></button></td>
+								<td><button type="button" onclick="view_edit_modal(<?php echo $record['lsid'] ?>)" class="btn btn-sm btn-primary"><i class='fa fa-pen'></i></button></td>
 
-					</tr>
+							</tr>
 
-				<?php } ?>
+						<?php } ?>
 
-				</tbody>
+					</tbody>
 
-			</table>
+				</table>
+
+			</div>
 
 		</div>
 
@@ -293,329 +337,332 @@
 
 </div>
 
-</div>
-
-<?php include "common/footer.php"?>
+<?php include "common/footer.php" ?>
 
 
 
 <script type="text/javascript">
+	$(document).ready(function() {
+		$('#data-table-buttons').DataTable({
 
+			dom: '<"row"<"col-sm-5"B><"col-sm-7"fr>>t<"row"<"col-sm-5"i><"col-sm-7"p>>',
 
+			buttons: [{
 
+				extend: 'excel',
 
-$( document ).ready(function()
-{
-	$('#data-table-buttons').DataTable({
+				className: 'btn-sm'
 
-		dom: '<"row"<"col-sm-5"B><"col-sm-7"fr>>t<"row"<"col-sm-5"i><"col-sm-7"p>>',
+			}, {
 
-		buttons: [ {
+				extend: 'pdf',
 
-			extend: 'excel',
+				className: 'btn-sm'
 
-			className: 'btn-sm'
+			}, {
 
-		}, {
+				extend: 'print',
 
-			extend: 'pdf',
+				className: 'btn-sm'
 
-			className: 'btn-sm'
+			}, {
 
-		}, {
+				extend: 'colvis',
 
-			extend: 'print',
+				className: 'btn-sm'
 
-			className: 'btn-sm'
+			}],
 
-		},{
-
-		extend: 'colvis',
-
-		className: 'btn-sm'
-
-		}],
-
-		responsive: false
+			responsive: false
 
 		});
 
 
-	// emi calculate  amount -------------------------------------------
+		// emi calculate  amount -------------------------------------------
 
-	$(".panel-body").on( "change keyup", "input[type='number'],select" , function()
-	{
+		$(".panel-body").on("change keyup", "input[type='number'],select", function() {
 
-		// get all input values -----
+			// get all input values -----
 
-        var loan_amount_inp = $( this ).parents( '.panel-body' ).find( '#loan_amount' );
-        var loan_amount_val = parseInt( $( loan_amount_inp ).val() , 10 );
+			var parentForm = $(this).parents('.panel-body');
 
-        var rate_of_interest_inp = $( this ).parents( '.panel-body' ).find( '#rate_of_interest' );
-        var rate_of_interest_val = parseFloat( $( rate_of_interest_inp ).val() ).toFixed( 2 );
+			var loan_amount_inp = $( parentForm ).find('#loan_amount');
+			var loan_amount_val = parseInt($(loan_amount_inp).val(), 10);
 
-		if( rate_of_interest_val < 0 )
-		{
-			$( rate_of_interest_inp ).val( 0 );
-			rate_of_interest_val = 0;
-		}
-		else if( rate_of_interest_val > 100 )
-		{
-			$( rate_of_interest_inp ).val( 100 );
-			rate_of_interest_val = 100;
-		}
+			var rate_of_interest_inp = $( parentForm ).find('#rate_of_interest');
+			var rate_of_interest_val = parseFloat($(rate_of_interest_inp).val()).toFixed(2);
 
-        var process_fee_percent_inp = $( this ).parents( '.panel-body' ).find( '#process_fee_percent' );
-        var process_fee_percent_val = parseFloat( $( process_fee_percent_inp ).val() ).toFixed( 2 );
-
-		if( process_fee_percent_val < 0 )
-		{
-			$( process_fee_percent_inp ).val( 0 );
-			process_fee_percent_val = 0;
-		}
-		else if( process_fee_percent_val > 100 )
-		{
-			$( process_fee_percent_inp ).val( 100 );
-			process_fee_percent_val = 100;
-		}
-
-        var bouncing_charges_percent_inp = $( this ).parents( '.panel-body' ).find( '#bouncing_charges_percent' );
-		var bouncing_charges_percent_val = parseFloat( $( bouncing_charges_percent_inp ).val() ).toFixed( 2 );
-
-		if( bouncing_charges_percent_val < 0 )
-		{
-			$( bouncing_charges_percent_inp ).val( 0 );
-			bouncing_charges_percent_val = 0;
-		}
-		else if( bouncing_charges_percent_val > 100 )
-		{
-			$( bouncing_charges_percent_inp ).val( 100 );
-			bouncing_charges_percent_val = 100;
-		}
-
-        var loan_duration_inp = $( this ).parents( '.panel-body' ).find( '#loan_duration' );
-        var loan_duration_val = parseInt( $( loan_duration_inp ).val(), 10 ) >= 1 ?
-		parseInt( $( loan_duration_inp ).val(), 10 ) : 1 ;
-
-        var payment_mode_inp = $( this ).parents( '.panel-body' ).find( '#payment_mode' );
-        var payment_mode_val = $( payment_mode_inp ).val();
-
-		//  get input whose values to be set -----
-        var bouncing_charges_inp = $( this ).parents( '.panel-body' ).find( '#bouncing_charges' );
-        var emi_amount_inp = $( this ).parents( '.panel-body' ).find( '#emi_amount' );
-        var process_fee_inp = $( this ).parents( '.panel-body' ).find( '#process_fee_value' );
-
-		// set initial value to 0
-		$( bouncing_charges_inp ).val( 0 );
-		$( emi_amount_inp ).val( 0 );
-		$( process_fee_inp ).val( 0 );
-
-
-		if( loan_amount_val > 1 )
-		{
-			// count bouncing charges ----
-			if( bouncing_charges_percent_val > 0 )
-			{
-				var bouncing_charges_val = Math.ceil( ( loan_amount_val / 100 ) * bouncing_charges_percent_val );
-				$( bouncing_charges_inp ).val( bouncing_charges_val );
+			if (rate_of_interest_val < 0) {
+				$(rate_of_interest_inp).val(0);
+				rate_of_interest_val = 0;
+			} else if (rate_of_interest_val > 100) {
+				$(rate_of_interest_inp).val(100);
+				rate_of_interest_val = 100;
 			}
 
+			var process_fee_percent_inp = $( parentForm ).find('#process_fee_percent');
+			var process_fee_percent_val = parseFloat($(process_fee_percent_inp).val()).toFixed(2);
 
-			// count Processing free charges ----
-
-			var process_fee_val = 0 ;
-
-			if( process_fee_percent_val > 0 )
-			{
-				var process_fee_val = Math.ceil( ( loan_amount_val / 100 ) * process_fee_percent_val );
-				$( process_fee_inp ).val( process_fee_val );
+			if (process_fee_percent_val < 0) {
+				$(process_fee_percent_inp).val(0);
+				process_fee_percent_val = 0;
+			} else if (process_fee_percent_val > 100) {
+				$(process_fee_percent_inp).val(100);
+				process_fee_percent_val = 100;
 			}
 
+			var bouncing_charges_percent_inp = $( parentForm ).find('#bouncing_charges_percent');
+			var bouncing_charges_percent_val = parseFloat($(bouncing_charges_percent_inp).val()).toFixed(2);
 
-			// count emi Amount --------
-
-			var interest_amount = 0;
-
-			if( rate_of_interest_val > 0 )
-			{
-				interest_amount = Math.ceil( ( loan_amount_val / 100 ) * rate_of_interest_val );
+			if (bouncing_charges_percent_val < 0) {
+				$(bouncing_charges_percent_inp).val(0);
+				bouncing_charges_percent_val = 0;
+			} else if (bouncing_charges_percent_val > 100) {
+				$(bouncing_charges_percent_inp).val(100);
+				bouncing_charges_percent_val = 100;
 			}
 
-			// get full payable amount for emi amount
-			// var final_amount = loan_amount_val + process_fee_val + interest_amount;
-			var final_amount = loan_amount_val + interest_amount;
+			var loan_duration_inp = $( parentForm ).find('#loan_duration');
+			var loan_duration_val = parseInt($(loan_duration_inp).val(), 10) >= 1 ?
+				parseInt($(loan_duration_inp).val(), 10) : 1;
 
-			// set initial emi count
-			var total_emi_count = 1;
+			var payment_mode_inp = $( parentForm ).find('#payment_mode');
+			var payment_mode_val = $(payment_mode_inp).val();
 
-			// get value to be divided by loan duration to calculate emi amount
-			var divided_by = 1;
+			//  get input whose values to be set -----
+			var bouncing_charges_inp = $( parentForm ).find('#bouncing_charges');
+			var process_fee_inp = $( parentForm ).find('#process_fee_value');
 
-			if( payment_mode_val == 'weekly' )
-			{
-				divided_by = 7;
-			}
-			else if( payment_mode_val == 'every-15-days' )
-			{
-				divided_by = 15;
-			}
-			else if( payment_mode_val == 'monthly' )
-			{
-				divided_by = 30;
-			}
+			var emi_amount_inp = $( parentForm ).find('#emi_amount');
+			var emi_count_show = $( parentForm ).find('.emiCountShow');
+			var final_loan_amount_inp = $( parentForm ).find('#final_loan_amount');
+			var payable_amount_inp = $( parentForm ).find('#payable_amount');
 
-			total_emi_count = Math.floor( loan_duration_val / divided_by ) ;
+			var emi_amount_with_lic_inp = $( parentForm ).find('#emi_amount_with_lic');
+			var final_loan_amount_with_lic_inp = $( parentForm ).find('#final_loan_amount_with_lic');
 
-			if( total_emi_count >= 1 )
-			{
-				$( emi_amount_inp ).val( Math.ceil( final_amount / total_emi_count ) );
+
+			// set initial value to 0
+			$(bouncing_charges_inp).val(0);
+			$(process_fee_inp).val(0);
+
+			$(emi_amount_inp).val(0);
+			$(final_loan_amount_inp).val(0);
+			$(payable_amount_inp).val(0);
+
+			$(emi_amount_with_lic_inp).val(0);
+			$(final_loan_amount_with_lic_inp).val(0);
+
+
+			if (loan_amount_val > 1) {
+				// count bouncing charges ----
+				if (bouncing_charges_percent_val > 0) {
+					var bouncing_charges_val = Math.ceil((loan_amount_val / 100) * bouncing_charges_percent_val);
+					$(bouncing_charges_inp).val(bouncing_charges_val);
+				}
+
+
+				// count Processing free charges ----
+
+				var process_fee_val = 0;
+
+				if (process_fee_percent_val > 0) {
+					var process_fee_val = Math.ceil((loan_amount_val / 100) * process_fee_percent_val);
+					$(process_fee_inp).val(process_fee_val);
+				}
+
+
+				// count emi Amount --------
+
+				var interest_amount = 0;
+
+				if ( rate_of_interest_val > 0 )
+				{
+					interest_amount_initial = Math.ceil( ( loan_amount_val / 100 ) * rate_of_interest_val );
+
+					if( loan_duration_val > 30 )
+					{
+						multiply_by = Math.ceil( loan_duration_val / 30 );
+						interest_amount = Math.ceil( interest_amount_initial * multiply_by );
+					}
+					else
+					{
+						interest_amount = interest_amount_initial;
+					}
+				}
+
+
+				var final_loan_amount = loan_amount_val + interest_amount;
+				var payable_amount = ( loan_amount_val ) - process_fee_val;
+
+				$(final_loan_amount_inp).val(final_loan_amount);
+				$(payable_amount_inp).val(payable_amount);
+
+				// ----------------
+
+				var one_percent = Math.ceil((loan_amount_val / 100));
+
+				var final_loan_amount_with_lic = final_loan_amount + one_percent;
+
+				$(final_loan_amount_with_lic_inp).val(final_loan_amount_with_lic);
+
+				// set initial emi count
+				var total_emi_count = 1;
+
+				// get value to be divided by loan duration to calculate emi amount
+				var divided_by = 1;
+
+				if (payment_mode_val == 'weekly') {
+					divided_by = 7;
+				} else if (payment_mode_val == 'every-15-days') {
+					divided_by = 15;
+				} else if (payment_mode_val == 'monthly') {
+					divided_by = 30;
+				}
+
+				total_emi_count = Math.floor(loan_duration_val / divided_by);
+
+				if (total_emi_count >= 1) {
+					$(emi_amount_inp).val(Math.ceil(final_loan_amount / total_emi_count));
+				} else {
+					$(emi_amount_inp).val(final_loan_amount);
+				}
+				
+				$( emi_count_show ).text( ' x '+total_emi_count );
+
+				if (total_emi_count >= 1) {
+					$(emi_amount_with_lic_inp).val(Math.ceil(final_loan_amount_with_lic / total_emi_count));
+				} else {
+					$(emi_amount_with_lic_inp).val(final_loan_amount_with_lic);
+				}
+
 			}
-			else
-			{
-				$( emi_amount_inp ).val( final_amount );
-			}
-			
-		}
+		});
+
+
 	});
 
-
-});
-
-function delete_loan_settings(lsid,status) {
+	function delete_loan_settings(lsid, status) {
 
 
 
-$.ajax({
+		$.ajax({
 
-url: "<?php echo base_url()?>admin/settings/update_loan_setting/"+lsid,
+			url: "<?php echo base_url() ?>admin/settings/update_loan_setting/" + lsid,
 
-type: "POST",
+			type: "POST",
 
-data:{
+			data: {
 
-	ls_status:status
+				ls_status: status
 
-},
+			},
 
-success: function(dataResult){
+			success: function(dataResult) {
 
-	var dataResult = JSON.parse(dataResult);
+				var dataResult = JSON.parse(dataResult);
 
-	if(dataResult.error==0)
+				if (dataResult.error == 0)
 
-	{	
+				{
 
 
 
-		alert('Status updated successfully !');
+					alert('Status updated successfully !');
 
-		location.reload();					
+					location.reload();
+
+				} else
+
+				{
+
+					alert('Error in Updating Status!');
+
+				}
+
+			}
+
+		});
 
 	}
 
-	else
+	function view_edit_modal(lsid) {
+
+		$.ajax({
+
+			url: "<?php echo base_url() ?>admin/settings/View_edit_modal/" + lsid,
+
+			type: "POST",
+
+			success: function(data) {
+
+				$("#edit_loan_setting .panel-body").html(data);
+
+				$("#edit_loan_setting .panel-body #loan_amount").change();
+
+				$("#edit_loan_setting").show();
+
+				// $("#add_loan_setting").hide();
+
+				$(window).scrollTop(0);
+
+			}
+
+		});
+
+	}
+
+	function edit_loan(form)
 
 	{
 
-		alert('Error in Updating Status!');
+		// 		$("#save").attr("disabled","disabled");
+
+		var formdata = $(form).serialize();
+
+		console.log(formdata);
+
+		$.ajax({
+
+			url: $(form).data('action'),
+
+			type: "POST",
+
+			data: formdata,
+
+			success: function(data)
+
+			{
+
+				//  $("#save").removeAttr("disabled");
+
+				var data = JSON.parse(data);
+
+				if (data.error == 0)
+
+				{
+
+					alert('Data updated successfully !');
+
+					location.reload();
+
+				} else
+
+				{
+
+					alert('Error in Updating data!');
+
+				}
+
+			}
+
+
+
+		});
+
+
+
+		return false;
 
 	}
-
-}
-
-});
-
-}
-
-function view_edit_modal(lsid) {
-
-$.ajax({
-
-url: "<?php echo base_url()?>admin/settings/View_edit_modal/"+lsid,
-
-type: "POST",
-
-success: function(data){
-
-	$("#edit_loan_setting .panel-body").html(data);
-
-	$("#edit_loan_setting").show();
-
-	// $("#add_loan_setting").hide();
-
-	$(window).scrollTop(0);
-
-}
-
-});
-
-}
-
-function edit_loan(form)
-
-{
-
-// 		$("#save").attr("disabled","disabled");
-
-var formdata=$(form).serialize();
-
-console.log(formdata);
-
-$.ajax({
-
-url:$(form).data('action'),
-
-type: "POST",
-
-data:formdata,
-
-success:function(data)
-
-{
-
-	//  $("#save").removeAttr("disabled");
-
-	var data=JSON.parse(data);
-
-	if(data.error==0)
-
-	{
-
-		alert('Data updated successfully !');
-
-		location.reload();
-
-	}
-
-	else
-
-	{
-
-		alert('Error in Updating data!');
-
-	}
-
-}
-
-
-	
-});
-
-
-
-return false;
-
-}
-
-
-
 </script>
-
-
-
-
-
-
-
-
-

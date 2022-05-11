@@ -54,10 +54,17 @@
                                 <form method="POST" class="col-12 row pr-0" action="<?= base_url() ?>manager/group_loans/user_otp_verify/<?= $group_loan_info['lsid'] ?>">
                                     <div class="col-12 d-flex">
                                         <input type="hidden" style="display: none;" value="<?= $mobile?>" name="user_contact">
-                                        <input type="number" required name="otp_val" id="otp_val" class="form-control">
+                                        <input type="number" required name="otp_val" id="otp_val" value="<?= $otp_val?>" class="form-control">
+                                    </div>
+                                    <div class="col-12 d-flex">
+                                       <select name="deduct_lic_amount" required class="form-control my-3">
+                                        <option value="" selected disabled>Deduct LIC Amount</option>
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                       </select>
                                     </div>
                                     <div class="col-12 d-flex justify-content-end my-2">
-                                        <button type="submit" id="submitBtn" disabled class="btn btn-lg btn-primary">Verify</button>
+                                        <button type="submit" id="submitBtn" <?php if( $otp_val == '' ){ echo 'disabled'; }?> class="btn btn-lg btn-primary">Verify</button>
                                     </div>
                                 </form>
                             </div>

@@ -165,6 +165,33 @@
 
 			</li>
 
+
+
+			<!-- temp loan -->
+			<li class="has-sub <?= (@$page == 'extensions' ? 'active' : '') ?>">
+
+				<a href="javascript:;">
+
+					<b class="caret"></b>
+
+					<i class="fa fa-list-ol" aria-hidden="true"></i>
+
+					<span>Extension Requests</span>
+
+				</a>
+
+				<ul class="sub-menu" style="display: block;">
+
+					<li <?= (@$sub_page == 'new_loan' ? 'class="active"' : '') ?>><a class='text-warning' href="<?= site_url('admin/extensions/new_extensions') ?>">New Requests <span class="badge badge-warning pull-right"><?= $new_extensions; ?></span></a></li>
+
+					<li <?= (@$sub_page == 'approved_loan' ? 'class="active"' : '') ?>><a class='text-success' href="<?= site_url('admin/extensions/approved_extensions') ?>">Approved Requests <span class="badge badge-success pull-right"><?= $approved_extensions; ?></span></a></li>
+
+					<li <?= (@$sub_page == 'rejected_loan' ? 'class="active"' : '') ?>><a class='text-danger' href="<?= site_url('admin/extensions/rejected_extensions') ?>">Rejected Requests <span class="badge badge-danger pull-right"><?= $rejected_extensions; ?></span></a></li>
+
+				</ul>
+
+			</li>
+
 			<!-- Todays Payments -->
 			<li class="has-sub <?= (@$page == 'payments' ? 'active' : '') ?>">
 
@@ -205,7 +232,7 @@
 
 					<i class="fab fa-app-store"></i>
 
-					<span>Users <span class="badge badge-warning pull-right"><?= $pendingusers; ?></span></span>
+					<span>Users</span>
 
 				</a>
 

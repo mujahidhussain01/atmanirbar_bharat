@@ -112,16 +112,6 @@
 
 ">
 
-		<li>
-
-		    <a href="javascript:refreshPanelty()" type="button" data-toggle='tooltip' data-title='Refresh Panelty loans' class="navbar-brand">
-
-			    <i class="ion ion-md-refresh" style='font-size:30px;'></i> 
-
-		    </a>
-
-		</li>
-
 		<li class="dropdown navbar-user">
 
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">

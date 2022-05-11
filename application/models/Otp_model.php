@@ -21,13 +21,16 @@ class Otp_model extends CI_model{
 
         return $query->result_array();
     }
+
     public function update($dataArray,$mobileNumber)
     {
-		   $result=$this->db->where($this->mobile_no ,$mobileNumber)->update($this->table,$dataArray) ; 
-		   if ($result) {
-             return $result;
-           }
-		   
+        $result = $this->db->where($this->mobile_no ,$mobileNumber)
+        ->update($this->table,$dataArray); 
+
+        if ($result)
+        {
+            return $result;
+        }
     }
 
     public function insert($data)
@@ -94,29 +97,36 @@ class Otp_model extends CI_model{
     {
         $returnData = [];
          
-         // creating unique 4 digit OTP
-         $length=4;
-         $key = '';
-         $keys = array_merge(range(0, 9));
-        for ($i = 0; $i < $length; $i++) {
-        $key .= $keys[array_rand($keys)];
-         }
+        // creating unique 4 digit OTP
+        $length=4;
+        $key = '';
+        $keys = array_merge(range(0, 9));
+
+        for ($i = 0; $i < $length; $i++) 
+        {
+            $key .= $keys[array_rand($keys)];
+        }
+
         $token= $key;
         
          // checking number already exist or not                         
         $checknumber=$this->checkmobile($mobile);
-         if(count($checknumber) > 0){
-             //updating otp table 
-             $updatedata['otp']=$token;
-             $updatedata['status']='INACTIVE';
-             $this->update($updatedata ,$mobile);
-         }else{
-             // inserting in otp Table
-              $insertdata['otp'] =$token;
-              $insertdata['mobile_number']=$mobile;
+
+        if(count($checknumber) > 0)
+        {
+            //updating otp table 
+            $updatedata['otp']=$token;
+            $updatedata['status']='INACTIVE';
+            $this->update($updatedata ,$mobile);
+        }
+        else
+        {
+            // inserting in otp Table
+            $insertdata['otp'] =$token;
+            $insertdata['mobile_number']=$mobile;
             $this->insert($insertdata);
-         }
-                //sending otp to mobile
+        }
+            //sending otp to mobile
             //     $curl = curl_init();
             //     curl_setopt_array($curl, array(
             //         CURLOPT_URL=>"http://sms3.pepanimation.com/api/sendhttp.php?authkey=359764An5sG6DaeSB60892d1aP1&mobiles=$mobile&message=Your%20ELM%20App%20verification%20OTP%20is%20$token.%20-%20Sent%20By%20Easy%20Loan%20Mantra&sender=ELMSMS&route=4&country=91&DLT_TE_ID=1207161945110838406",
@@ -137,13 +147,13 @@ class Otp_model extends CI_model{
 		    // $err = curl_error($curl);
 		    // curl_close($curl);
          
-         //fetching data for response
-          $returnData = $otpdetail=$this->getrowdata($mobile);
-          
-          return $returnData;
-         
+        //fetching data for response
+        $returnData = $this->getrowdata($mobile);
         
+        return $returnData;
     }
+
+
     public function getrowdata($mobile)
     {
         $this->db->select('*');
@@ -179,6 +189,7 @@ class Otp_model extends CI_model{
         $query=$this->db->get();
         return $query->result_array();
     }
+
     public function checkmobile($data)
     {
         $this->db->select('*');
@@ -187,7 +198,8 @@ class Otp_model extends CI_model{
         $query=$this->db->get();
         return $query->result_array();
     }
-        public function updatestatus($mobile_number){
+
+    public function updatestatus($mobile_number){
         $data['status']="ACTIVE";
         $this->db->where('mobile_number',$mobile_number);
         $this->db->update($this->table,$data);

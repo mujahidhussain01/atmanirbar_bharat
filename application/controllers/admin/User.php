@@ -24,6 +24,7 @@ class User extends CI_Controller
 
 			$this->load->model('Loan_apply_model');
 
+			$this->load->model( 'Loan_extension_model' );
 
 			$this->load->model('Loan_payments_model');
 
@@ -409,6 +410,31 @@ class User extends CI_Controller
 
 						</div>
 
+						<div class="col-sm-12 col-md-6">
+
+							<label>User last Name: </label>
+
+							<div class="form-group">
+
+								<input name='last_name' type="text" placeholder="User last Name" value="<?= $user->last_name ?>" class="form-control" required>
+
+							</div>
+
+						</div>
+
+						<div class="col-sm-12 col-md-6">
+
+							<label>User Email: </label>
+
+							<div class="form-group">
+
+								<input name='email' type="text" placeholder="User Email" value="<?= $user->email ?>" class="form-control" required>
+
+							</div>
+
+						</div>
+
+						
 						<div class="col-sm-12 col-md-6">
 
 							<label>User last Name: </label>
@@ -976,11 +1002,25 @@ class User extends CI_Controller
 
 											<div class="form-group">
 
-												<input type="text" name='last_name' placeholder="Nominee User last Name" value="<?= $user->last_name ?>" class="form-control">
+												<input type="text" name='last_name' placeholder="User last Name" value="<?= $user->last_name ?>" class="form-control">
 
 											</div>
 
 										</div>
+
+
+										<div class="col-12 col-md-6">
+
+											<label>User Email: </label>
+
+											<div class="form-group">
+
+												<input type="text" name='email' placeholder="User Email" value="<?= $user->email ?>" class="form-control">
+
+											</div>
+
+										</div>
+
 
 										<div class="col-12 col-md-6">
 
@@ -1469,6 +1509,11 @@ class User extends CI_Controller
 			$data = $_POST;
 
 			unset($data['doc_type']);
+
+			if( isset( $_POST[ 'mobile' ] ) )
+			{
+				unset( $data[ 'mobile' ] );
+			}
 		}
 
 		if (!empty($_FILES['adhar_card_front']['name'])) {

@@ -14,7 +14,31 @@
 <div class="content-wrapper-before" style="position: relative;">
 		<div class="content-header row">
 			<div class="content-header-left col-md-4 col-12">
-				<h5 class="content-header-title text-center mt-1 text-white">Claim Loan</h5>
+				<h5 class="content-header-title text-center mt-1 text-white"> 
+                    <?php 
+                        if( $this->uri->segment('4') )
+                        { 
+                            if( $this->uri->segment('4') == 'loans_under_approval' )
+                            {
+                                echo 'Under Approval';
+                            }
+                            else if( $this->uri->segment('4') == 'running_loans' )
+                            {
+                                echo 'Running';
+
+                            }
+                            else if( $this->uri->segment('4') == 'closed_loans' )
+                            {
+                                echo 'Closed';
+                            }
+                            
+                        }
+                        else
+                        {
+                            echo 'All';
+                        }
+                    ?> 
+                    Loans</h5>
 			</div>
 		</div>
 	</div>
@@ -22,13 +46,10 @@
     <div class="content-wrapper">
         <div id="content" class="content-body">
 
-
-
-
             <div class="row">
-                <form method="get" class="col-12 row pr-0" action="<?php echo base_url('manager/loans') ?>">
+                <form method="get" class="col-12 row pr-0" action="<?php echo base_url('manager/'.( $this->uri->segment('4') ? 'loans/index/'.$this->uri->segment('4') : 'loans' )) ?>">
                     <div class="col-12 d-flex">
-                        <input type="text" required name="search" class="form-control" id="search" placeholder="Enter User Name">
+                        <input type="text" required name="search" class="form-control" id="search" placeholder="Search Loans By User Name">
                         <button type="submit" class="btn btn-primary ml-1"><i class="fa fa-search"></i></button>
                     </div>
                 </form>
@@ -139,10 +160,10 @@
                                                     <td>
                                                         <?php
 
-                                                        $profile_status = '<button class="btn btn-warning">Incomplete</button>';
+                                                        $profile_status = '<button class="btn btn-warning btn-sm">Incomplete</button>';
 
                                                         if ( $loan[ 'bda_status' ] == 'APPROVED' && $loan[ 'adhar_card_front' ] != '' && $loan[ 'adhar_card_back' ] != '' && $loan[ 'pan_card_image' ] != '' && $loan[ 'passbook_image' ] != '') {
-                                                            $profile_status = '<button class="btn btn-success">Completed</button>';
+                                                            $profile_status = '<button class="btn btn-success btn-sm">Completed</button>';
                                                         }
                                                         echo $profile_status;
                                                         ?>
@@ -152,12 +173,12 @@
                                                     <th>Profile Approved</th>
                                                     <td>
                                                         <?php
-                                                        $profile_approved = '<button class="btn btn-warning">Pending</button>';
+                                                        $profile_approved = '<button class="btn btn-warning btn-sm">Pending</button>';
 
                                                         if ($loan[ 'bda_status' ] == 'APPROVED' && $loan[ 'docv_status' ] == 'APPROVED' && $loan[ 'pan_card_approved_status' ] == 'APPROVED' && $loan[ 'passbook_approved_status' ] == 'APPROVED') {
-                                                            $profile_approved = '<button class="btn btn-success">Approved</button>';
+                                                            $profile_approved = '<button class="btn btn-success btn-sm">Approved</button>';
                                                         } elseif ($loan[ 'bda_status' ] == 'REJECTED' || $loan[ 'docv_status' ] == 'REJECTED' || $loan[ 'pan_card_approved_status' ] == 'REJECTED' || $loan[ 'passbook_approved_status' ] == 'REJECTED') {
-                                                            $profile_approved = '<button class="btn btn-danger">Rejected</button>';
+                                                            $profile_approved = '<button class="btn btn-danger btn-sm">Rejected</button>';
                                                         }
                                                         echo $profile_approved;
                                                         ?>
@@ -168,18 +189,18 @@
                                                     <td><?= $loan['reject_comment'] ?></td>
                                                 </tr>
 
-                                                <tr>
+                                                <!-- <tr>
                                                     <th>Claim Loan</th>
 
                                                     <td>
 
                                                     <?php if ( $loan['manager_id'] == null && ( $loan['loan_status'] == 'APPROVED' || $loan['loan_status'] == 'PENDING' )) : ?> 
 
-                                                        <button type="button" class="btn btn-primary" id="claimBtn" data-id="<?php echo $loan['la_id'] ?>" >Claim This Loan</button>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="claimBtn" data-id="<?php echo $loan['la_id'] ?>" >Claim This Loan</button>
 
                                                     <?php else:?>
 
-                                                        <button type="button" class="btn btn-primary" disabled>Claimed</button>
+                                                        <button type="button" class="btn btn-primary btn-sm" disabled>Claimed</button>
 
                                                     <?php endif;?>
                                                     </td>
@@ -197,18 +218,26 @@
                                                         NONE
                                                     <?php endif; ?>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
 
                                                 <?php if( $loan[ 'loan_status' ] == 'RUNNING' || $loan[ 'loan_status' ] == 'PAID' ):?>
                                                 <tr>
                                                     <th>Loan Payments</th>
                                                     <td>
-                                                        <a class="btn btn-primary" href="<?= base_url( 'manager/loans/loan_payments/'.$loan[ 'la_id' ] )?>">
-                                                                Show <br> Payments
+                                                        <a class="btn btn-primary btn-sm" href="<?= base_url( 'manager/loans/loan_payments/'.$loan[ 'la_id' ] )?>">
+                                                                Show Payments
                                                         </a>
                                                     </td>
                                                 </tr>
                                                 <?php endif;?>
+                                                <tr>
+                                                    <th>Full Detail</th>
+                                                    <td>
+                                                        <a href="<?= base_url( 'manager/loans/details/'.$loan[ 'la_id' ] )?>" class="btn btn-primary btn-sm">
+                                                            View Details
+                                                        </a>
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>

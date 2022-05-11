@@ -116,7 +116,7 @@
             <div class="col"> No Loan Found Found</div>
             <?php endif; ?>
 
-            <h4 class="my-2 text-center">Users List</h4>
+            <h4 class="my-2 text-center">Active Users List</h4>
 
 
             <?php if (!empty($loan_users)) :?>

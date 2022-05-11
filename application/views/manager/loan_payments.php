@@ -22,29 +22,45 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title text-capitalize">
-                                    Loan ID : <?= $loan[ 'la_id' ]?>
+                                   <strong> Loan ID : </strong> <?= $loan[ 'la_id' ]?>
                                    <div class="my-1">
-                                    Name : <?= $loan['first_name'] . ' ' . $loan['last_name'] . ' (' . $loan['mobile'] . ')' ?>
+                                       <strong>
+                                    Name : </strong> <?= $loan['first_name'] . ' ' . $loan['last_name'] . ' (' . $loan['mobile'] . ')' ?>
                                    </div>
 
                                    <div class="my-1">
-                                   Loan Type : <?php echo $loan[ 'loan_type' ]?>
+                                       <strong>
+                                   Loan Type : </strong> <?php echo $loan[ 'loan_type' ]?>
                                    </div>
 
                                    <div class="my-1">
-                                   Loan Amount : ₹<?php echo $loan[ 'amount' ]?>
+                                       <strong>
+                                   Loan Amount : </strong> ₹<?php echo $loan[ 'amount' ]?>
                                    </div>
 
-                                   <div class="mt-1">
-                                    EMI Amount : ₹<?= $loan['emi_amount'] ?>
+                                   <div class="my-1">
+                                       <strong>
+                                    EMI Amount : </strong> ₹<?= $loan['emi_amount'] ?>
                                     </div>
 
-                                    <div class="mt-1">
-                                    Remaining Balance : ₹<?= $loan['remaining_balance'] ? $loan['remaining_balance'] : 0 ?>
+                                   <div class="my-1">
+                                       <strong>
+                                   Rate Of Interest : </strong> <?= $loan['rate_of_interest'] ?>%
+                                    </div>
+
+                                   <div class="my-1">
+                                       <strong>
+                                   Payable Amount : </strong> ₹<?= $loan['payable_amt'] ?>
+                                    </div>
+
+                                    <div class="my-1">
+                                        <strong>
+                                    Remaining Balance : </strong> ₹<?= $loan['remaining_balance'] ? $loan['remaining_balance'] : 0 ?>
                                     </div>
                                     
                                     <div class="my-1">
-                                    Loan Status :
+                                        <strong>
+                                    Loan Status : </strong>
                                         <?php if ($loan['loan_status'] == 'PAID') : ?>
                                             <span class="badge badge-success">Closed</span>
                                         <?php elseif ($loan['loan_status'] == 'RUNNING') : ?>
@@ -66,6 +82,18 @@
         </div>
     </div>
 
+        <?php if ( $loan['loan_status'] == 'RUNNING') : ?>
+        <div class="content-wrapper">
+            <div id="content" class="content-body">
+                <div class="panel-group">
+                    <div class="d-flex justify-content-end">
+                        <a href="<?= base_url( 'manager/loans/foreclose_loan_request/'.$loan[ 'la_id' ] )?>" class="btn btn-primary">ForeClose Loan</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <?php if( !empty( $loan_payments ) ):?>
             
             <?php $mark_payment = true;?>
@@ -80,9 +108,9 @@
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <h6 class="panel-title text-capitalize d-flex justify-content-between">
-                                        <div>Date : <?= date( 'd M Y', strtotime( $loan_payment['payment_date'] ) ) ?></div>
+                                        <div><strong>Date :</strong> <?= $loan_payment['payment_date'] ? date( 'd M Y', strtotime( $loan_payment['payment_date'] ) ) : '' ?></div>
                                         <div>
-                                        Amount : ₹<?= $loan_payment['amount'] ?>
+                                        <strong>Amount :</strong> ₹<?= $loan_payment['amount'] ?>
                                         </div>
                                         
                                         </h6>

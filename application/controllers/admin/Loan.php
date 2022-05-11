@@ -12,7 +12,9 @@ class Loan extends CI_Controller {
 
 			$this->load->model('User_model');
             $this->load->model('Loan_apply_model');
+			$this->load->model( 'Loan_extension_model' );
             $this->load->model('Loan_payments_model');
+
             date_default_timezone_set('asia/kolkata');
 
 	}
@@ -63,7 +65,7 @@ class Loan extends CI_Controller {
 
 	public function getLoanData()
     {
-	    $daterange = explode('-',$_POST['date_range']);
+	    $daterange = explode('-',$this->input->post( 'date_range' ));
 	    $minvalue = date('Y-m-d',strtotime($daterange[0])).' 00:00:00';
         $maxvalue = date('Y-m-d',strtotime($daterange[1])).' 23:59:59';
 
@@ -138,18 +140,35 @@ class Loan extends CI_Controller {
 											<li class="mt-2"><strong>Loan ID : </strong> <?= $la['la_id']?></li>
 											<li class="mt-2"><strong>Loan Type : </strong> <?= $la['loan_type']?></li>
 											<li class="mt-2"><strong>Amount : </strong> <?=( $la['amount']?'₹'. $la['amount']:'NA')?></li>
-											<li class="mt-2"><strong>Rate Of Interest : </strong> <?=$la['rate_of_interest']?>%</li>
-											<li class="mt-2"><strong>Processing Fee : </strong> <?=( $la['processing_fee']?'₹'. $la['processing_fee']:'NA')?></li>
-											<li class="mt-2"><strong>Closer Amount : </strong> ₹<?= $la['loan_closer_amount']?></li>
-											<li class="mt-2"><strong>Loan Duration : </strong> <?= $la['loan_duration']?> Days</li>
-											<li class="mt-2"><strong>Payment Mode : </strong> <?= $la['payment_mode']?></li>
-											<li class="mt-2"><strong>Emi Amount : </strong> ₹<?= $la['emi_amount']?></li>
-											<li class="mt-2"><strong>Claimed By  : </strong> <?= $la[ 'manager_name' ] ? $la[ 'manager_name' ].' ( Manager ) ' : 'NONE' ?></li>
 
-											<?php if( $_POST['page'] == 'running_loan' || $_POST['page'] == 'paid_loan' || $_POST['page'] == 'all_loan'  ):?>
-											<li class="mt-2"><strong>Remaining Balance  : </strong> ₹<?= $la[ 'remaining_balance' ] ?></li>
+											<?php if( in_array( $_POST[ 'page' ], [ 'running_loan', 'paid_loan' ] ) ):?>
+											<li class="mt-2">
+											<strong>Processing Fees : </strong> <?=( $la['processing_fee']?'₹'. $la['processing_fee']:'NA')?>
+											</li>
+											<li class="mt-2">
+											<strong>Payable Amount : </strong> <?=( $la['payable_amt']?'₹'. $la['payable_amt']:'NA')?>
+											</li>
+
+											<li class="mt-2">
+											<strong>Deduct 1% LIC Amount : </strong> <?=$la['deduct_lic_amount']?>
+											</li>
+
+											<li class="mt-2">
+											<strong>Final Loan Amount : </strong> <?=( $la['loan_closer_amount']?'₹'. $la['loan_closer_amount']:'NA')?>
+											</li>
+											<li class="mt-2">
+											<strong>Remaining Balance : </strong> <?=( $la['remaining_balance']?'₹'. $la['remaining_balance']:'NA')?>
+											</li>
 											<?php endif;?>
-											
+
+											<li>
+												<a href="<?= base_url( 'admin/loan/details/'.$la[ 'la_id' ] )?>">
+													<button type="button" class="btn btn-primary btn-sm my-2">
+														View Loan Details
+													</button>
+												</a>
+											</li>
+
 										</ul>
 									</td>
 									<td>
@@ -275,10 +294,7 @@ class Loan extends CI_Controller {
 
 		if($_POST['value'] == 'RUNNING')
 		{
-          	$data['reject_comment'] = "Loan Amount Disbursed";  
-			$data['loan_start_date'] = date('Y-m-d H:i:s');
-
-			$divided_by = 1;
+          	$divided_by = 1;
 
 			if( $loan[ 'payment_mode' ] == "weekly" )
 			{
@@ -303,7 +319,16 @@ class Loan extends CI_Controller {
 
 			for( $i = 0; $i < $emi_count; $i++ )
 			{
-				$next_date = date( 'Y-m-d', strtotime( $next_date." + ".$divided_by." days" ) );
+				if( $divided_by !== 30  )
+				{
+					$next_date = date( 'Y-m-d', strtotime( $next_date." + ".$divided_by." days" ) );
+				}
+				else
+				{
+					$next_date = date( 'Y-m-d', strtotime( $next_date." + 1 month" ) );
+
+				}
+
 				$insert_loan_payments[] = [
 					'loan_apply_id' => $loan[ 'la_id' ],
 					'user_id' => $loan[ 'user_id' ],
@@ -319,6 +344,10 @@ class Loan extends CI_Controller {
 				$error['message'] = 'Status Not Updated';
 				echo json_encode($error); return;
 			}
+
+			$data['reject_comment'] = "Loan Amount Disbursed";  
+			$data['loan_start_date'] = date( 'Y-m-d' );
+			$data['loan_last_date'] = $next_date;
         }
 
 
@@ -346,94 +375,130 @@ class Loan extends CI_Controller {
 	}
 
 
-		// --------------------------------------------------
+	// --------------------------------------------------
 
-		public function getPaymentDetails()
+	public function getPaymentDetails()
+	{
+		if( !$loan_details = $this->Loan_apply_model->getloandetail2( intval( $_POST[ 'la_id' ] ) ) )
 		{
-			if( $payments = $this->Loan_payments_model->get_all_payments( intval( $_POST[ 'la_id' ] ) ) )
-			{
-				$has_inactive = false;
-			?>
-			<div class="p-5">
-			<h4 class="my-4 text-center" >Payment Details Of Loan ID : <?php echo $_POST[ 'la_id' ]?></h4>
-			<hr>
-			<div class="table-responsive p-4">
-				<table class="table table-centered table-bordered table-condensed table-nowrap">
-					<thead>
-						<tr>
-							<th>S.no</th>
-							<th>Emi Amount</th>
-							<th>Payment Date</th>
-							<th>Bouncing Charges</th>
-							<th>Payment Status</th>
-							<th>Amount Received</th>
-							<th>Received By</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ( $payments as $key => $payment ):?>
-	
-							<tr>
-								<td><?php echo ++$key ?></td>
-								<td>₹<?php echo $payment[ 'amount' ]?></td>
-								<td><?php echo date( 'd-M-Y', strtotime( $payment[ 'payment_date' ] ) )?></td>
-								<td><?php echo $payment[ 'bounce_charges' ] ? $payment[ 'bounce_charges' ] : "NA" ?></td>
-								<td>
-									<?php if( $payment[ 'status' ] == 'ACTIVE' ):?>
-	
-										<button class="btn btn-success">Payed</button>
-	
-									<?php  elseif( $payment[ 'status' ] == 'INACTIVE' ):?>
-										
-										<?php if( !$has_inactive ):?>
-
-											<?php $has_inactive = true;?>
-
-										<button onclick="markPaymentReceived( '<?php echo $payment[ 'id' ]?>','<?php echo $payment[ 'amount' ]?>' )" class="btn btn-info m-3">Mark Received</button>
-
-										<?php else:?>
-
-											<button class="btn btn-secondary m-3">Pending</button>
-
-										<?php endif;?>
-									
-									<?php endif;?>
-								</td>
-								<td>
-								₹<?php echo $payment[ 'amount_received' ]?>
-								</td>
-								<td>
-									<?php if( $payment[ 'amount_received_by' ] == 'MANAGER' )
-									{
-										echo $payment[ 'manager_name' ].' ( Manager ) ';
-									}
-									else if( $payment[ 'amount_received_by' ] == 'ADMIN' )
-									{
-										echo 'ADMIN';
-									}
-									
-									?>
-								</td>
-							</tr>
-	
-						<?php endforeach;?>
-					</tbody>
-	
-				</table>
-	
-			</div>
-			</div>
-	
-			<?php 
-			}
-			else
-			{
-				show_404();
-			}
-	
-	
+			echo 'Invalid Loan ID';
+			return;
 		}
-	
-		// --------------------------------------------------
+
+		if( $payments = $this->Loan_payments_model->get_all_payments( intval( $_POST[ 'la_id' ] ) ) )
+		{
+			$has_inactive = false;
+		?>
+		<div class="p-5">
+		<h4 class="my-4 text-center" >Payment Details Of Loan ID : <?php echo $_POST[ 'la_id' ]?></h4>
+		<hr>
+		<div class="table-responsive p-4">
+
+			<?php if( $loan_details[ 'loan_status' ] == 'RUNNING' ):?>
+
+			<div class="d-flex justify-content-end my-3 border-top border-bottom">
+				<a href="<?= base_url( 'admin/manage_payments/foreclose_loan_request/'.intval( $_POST[ 'la_id' ] ) )?>" class="btn btn-primary my-3">ForeClose Loan</a>
+			</div>
+
+			<?php endif;?>
+
+			<table class="table table-centered table-bordered table-condensed table-nowrap">
+				<thead>
+					<tr>
+						<th>S.no</th>
+						<th>Emi Amount</th>
+						<th>Payment Date</th>
+						<th>Bouncing Charges</th>
+						<th>Payment Status</th>
+						<th>Amount Received</th>
+						<th>Amount Received At</th>
+						<th>Received By</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ( $payments as $key => $payment ):?>
+
+						<tr>
+							<td><?php echo ++$key ?></td>
+							<td>₹<?php echo $payment[ 'amount' ]?></td>
+							<td><?php echo $payment[ 'payment_date' ] ? date( 'd-M-Y', strtotime( $payment[ 'payment_date' ] ) ) : 'NA' ?></td>
+							<td><?php echo $payment[ 'bounce_charges' ] ? $payment[ 'bounce_charges' ] : "NA" ?></td>
+							<td>
+								<?php if( $payment[ 'status' ] == 'ACTIVE' ):?>
+
+									<button class="btn btn-success">Payed</button>
+
+								<?php  elseif( $payment[ 'status' ] == 'INACTIVE' ):?>
+									
+									<?php if( !$has_inactive ):?>
+
+										<?php $has_inactive = true;?>
+
+									<button onclick="markPaymentReceived( '<?php echo $payment[ 'id' ]?>','<?php echo $payment[ 'amount' ]?>' )" class="btn btn-info m-3">Mark Received</button>
+
+									<?php else:?>
+
+										<button class="btn btn-secondary m-3">Pending</button>
+
+									<?php endif;?>
+								
+								<?php endif;?>
+							</td>
+							<td>
+							₹<?php echo $payment[ 'amount_received' ]?>
+							</td>
+							<td><?php echo $payment[ 'amount_received_at' ] ? date( 'd-M-Y', strtotime( $payment[ 'amount_received_at' ] ) ) : 'NA' ?></td>
+							<td>
+								<?php if( $payment[ 'amount_received_by' ] == 'MANAGER' )
+								{
+									echo $payment[ 'manager_name' ].' ( Manager ) ';
+								}
+								else if( $payment[ 'amount_received_by' ] == 'ADMIN' )
+								{
+									echo 'ADMIN';
+								}
+								
+								?>
+							</td>
+						</tr>
+
+					<?php endforeach;?>
+				</tbody>
+
+			</table>
+
+		</div>
+		</div>
+
+		<?php 
+		}
+		else
+		{
+		?>
+			<h4 class="p-3">No Payments Found</h4>
+		<?php
+		}
+
+	}
+
+	// --------------------------------------------------
+
+	public function details( $loan_id = false )
+	{
+		if( empty( intval( $loan_id ) ) ) show_404();
+		
+		if( !$this->data[ 'loan_details' ] = $this->Loan_apply_model->getloandetail2( intval( $loan_id ) ) )
+		show_404();
+
+		$this->data['page'] = 'loan';
+	    $this->data['sub_page'] = 'Loan Details';
+	    $this->data['page_title'] = 'Loan Details';
+
+		$this->load->model( 'loan_extension_model' );
+
+	    $this->data['loan_extension'] = $this->loan_extension_model->get_single_extension_by_loan_id( intval( $loan_id ) );
+
+	    $this->load->view('admin/loan_details',$this->data);
+	}
 	
 }

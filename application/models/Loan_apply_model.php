@@ -19,9 +19,16 @@ class Loan_apply_model extends CI_Model
 	}
 	public function getloandetail($la_id)
 	{
-		$this->db->select('*');
+		$this->db->select("
+		la.*,
+		COALESCE (ls.loan_type, 'Manual') AS loan_type,
+		ma.name as manager_name");
 		$this->db->from('loan_apply la');
-// 		$this->db->join('loan_setting ls','la.loan_id=ls.lsid');
+
+		$this->db->join('loan_setting ls','la.loan_id=ls.lsid', 'left' );
+		$this->db->join('managers ma','ma.id = la.manager_id', 'left');
+		$this->db->join('user u','u.userid=la.user_id');
+		
 		$this->db->where('la.la_id',$la_id);
 		$query = $this->db->get();
 		return $query->row_array();
@@ -90,7 +97,7 @@ class Loan_apply_model extends CI_Model
 		$this->db->join('managers ma','ma.id = la.manager_id', 'left');
 		$this->db->join('user u','u.userid=la.user_id');
 
-		$this->db->where( 'manager_id', $manager_id );
+		// $this->db->where( 'manager_id', $manager_id );
 		if( $status )
 		{
 			$this->db->where_in( 'loan_status', $status );
@@ -106,7 +113,7 @@ class Loan_apply_model extends CI_Model
 		$this->db->from('loan_apply la');
 // 		$this->db->join('loan_setting ls','la.loan_id=ls.lsid');
 		$this->db->join('user u','u.userid=la.user_id');
-		$this->db->where( 'manager_id', $manager_id );
+		// $this->db->where( 'manager_id', $manager_id );
 		if( $status )
 		{
 			$this->db->where_in( 'loan_status', $status );
@@ -144,6 +151,15 @@ class Loan_apply_model extends CI_Model
 		$this->db->join( 'user', 'user.userid = loan_apply.user_id', 'left' );
 		$query = $this->db->get();
 		return $query->result_array();
+	}
+
+	public function get_all_group_loans_count()
+	{
+		$this->db->select('*');
+		$this->db->from('loan_setting');
+		$this->db->where( 'loan_type' , 'GROUP' );
+
+		return $this->db->count_all_results();
 	}
 
 	public function get_group_loan_user_count( $lsid )
@@ -188,21 +204,28 @@ class Loan_apply_model extends CI_Model
 	}
 	public function getuserallloanlist($user_id)
 	{
-		$this->db->select('*');
+		$this->db->select("
+		la.*,
+		COALESCE (ls.loan_type, 'Manual') AS loan_type,
+		ma.name as manager_name");
 		$this->db->from('loan_apply la');
-// 		$this->db->join('loan_setting ls','la.loan_id=ls.lsid');
+
+		$this->db->join('loan_setting ls','la.loan_id=ls.lsid', 'left' );
+		$this->db->join('managers ma','ma.id = la.manager_id', 'left');
+
 		$this->db->where('la.user_id',$user_id);
 		$this->db->order_by('la.la_doc','desc');
 		$query = $this->db->get();
 		return $query->result_array();
 	}
-	public function loantakenbyuserornot($user_id,$ls_id)
+
+	public function get_user_loan_by_loan_id( $user_id, $la_id )
 	{
 		$this->db->select('*');
 		$this->db->from('loan_apply la');
 		$this->db->where('la.user_id',$user_id);
-		$this->db->where('la.loan_id',$ls_id);
-		$this->db->where('la.loan_status','PROCESSED');
+		$this->db->where('la.la_id',$la_id);
+
 		$query = $this->db->get();
 		return $query->row_array();
 	}

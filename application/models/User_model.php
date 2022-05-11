@@ -12,21 +12,29 @@ class User_model extends CI_model{
 		$this->db->select('*');
 		$this->db->from($this->table);
 		$this->db->where('mobile',$mobile_number);
-		$query=$this->db->get();
+
+		$query = $this->db->get();
+
 		$checkmob=$query->row();
-         $returnData = [];
-		 $length=35;
+
+        $returnData = [];
+        $length=35;
         $key = '';
+
         $keys = array_merge(range(0, 9), range('a', 'z'));
+
         for ($i = 0; $i < $length; $i++) 
         {
           $key .= $keys[array_rand($keys)];
         }
+
         $token= $key;
+
         $data['token']=$token;
+
 		if(!empty($checkmob))
         {                 
-        $this->updateUserData($mobile_number,$data);
+            $this->updateUserData($mobile_number,$data);
         }
         else
         {
@@ -35,10 +43,12 @@ class User_model extends CI_model{
             $data['default_message']='Your account has been created successfully please provide your employment documents to verify your profile.Please wait until our team will verify you.We will keep you informed.Thanks ';
             $this->InsertNewUser($data);
         }
-        $this->Otp_model->updatestatus($mobile_number);
-        $returnData=$this->readUniqueUserforMobile($mobile_number);
-        return $returnData;
 
+        $this->Otp_model->updatestatus($mobile_number);
+
+        $returnData = $this->readUniqueUserforMobile($mobile_number);
+
+        return $returnData;
 	}
 
     public function updateUserData($mobile,$data){
@@ -297,9 +307,9 @@ class User_model extends CI_model{
             $this->db->select('*');
             $this->db->from($this->table);
             $this->db->where('status','ACTIVE');
-            $this->db->where('(bda_status = "NOT_AVAILABLE" OR
-            pan_card_approved_status = "NOT_AVAILABLE" OR 
-            docv_status = "NOT_AVAILABLE" OR 
+            $this->db->where('(bda_status = "NOT_AVAILABLE" AND
+            pan_card_approved_status = "NOT_AVAILABLE" AND 
+            docv_status = "NOT_AVAILABLE" AND 
             passbook_approved_status = "NOT_AVAILABLE")');
             $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
             $query = $this->db->get();

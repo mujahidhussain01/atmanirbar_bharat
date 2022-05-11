@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 22, 2022 at 10:46 AM
+-- Generation Time: May 11, 2022 at 01:44 PM
 -- Server version: 10.4.18-MariaDB
 -- PHP Version: 7.3.27
 
@@ -11,14 +11,8 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
--- Database: `finance_application`
+-- Database: `development_atmanirbhar_bharat`
 --
 
 -- --------------------------------------------------------
@@ -66,6 +60,13 @@ CREATE TABLE `feedback` (
   `f_dom` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   `read_status` enum('READ','UNREAD') DEFAULT 'UNREAD'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `feedback`
+--
+
+INSERT INTO `feedback` (`f_id`, `user_id`, `name`, `email`, `phone`, `title`, `message`, `f_type`, `status`, `f_doc`, `f_dom`, `read_status`) VALUES
+(1, '13', NULL, NULL, NULL, 'Nice', 'Thank you', 'FEEDBACK', 'ACTIVE', '2022-03-16 10:13:00', '2022-03-24 12:45:29', 'READ');
 
 -- --------------------------------------------------------
 
@@ -117,18 +118,20 @@ CREATE TABLE `loan_apply` (
   `user_id` int(11) DEFAULT NULL,
   `manager_id` int(11) DEFAULT NULL,
   `loan_status` enum('PENDING','APPROVED','REJECTED','PAID','RUNNING') NOT NULL DEFAULT 'PENDING',
+  `parent_id` int(11) NOT NULL,
+  `monthly_interest` int(11) NOT NULL,
+  `extension_of` int(11) DEFAULT NULL,
+  `emi_bounced_amount` int(11) NOT NULL,
+  `has_extensions` enum('YES','NO') NOT NULL DEFAULT 'NO',
   `loan_start_date` date DEFAULT NULL,
   `loan_end_date` date DEFAULT NULL,
+  `loan_last_date` date DEFAULT NULL,
   `reject_comment` varchar(255) DEFAULT NULL,
   `payable_amt` int(11) DEFAULT NULL,
   `remaining_balance` int(11) DEFAULT NULL,
   `loan_closer_amount` int(11) DEFAULT NULL,
-  `panelty_status` enum('ACTIVE','INACTIVE','','') NOT NULL DEFAULT 'INACTIVE',
-  `panelty_calc_date` date DEFAULT NULL,
-  `loan_panelty_days` int(11) NOT NULL,
-  `loan_panelty_amount` int(11) NOT NULL,
-  `money_paid` enum('ACTIVE','INACTIVE','','') DEFAULT 'INACTIVE',
-  `money_return` enum('ACTIVE','INACTIVE','','') NOT NULL DEFAULT 'INACTIVE',
+  `deduct_lic_amount` enum('YES','NO') DEFAULT 'NO',
+  `lic_amount` int(11) NOT NULL,
   `amount` varchar(11) DEFAULT NULL,
   `rate_of_interest` varchar(11) DEFAULT NULL,
   `process_fee_percent` varchar(11) DEFAULT NULL,
@@ -153,14 +156,14 @@ CREATE TABLE `loan_extension` (
   `le_id` int(11) NOT NULL,
   `la_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
-  `ext_days` int(11) DEFAULT NULL,
-  `ext_charges` int(11) DEFAULT NULL,
-  `extention_status` enum('PENDING','APPROVED','REJECTED') NOT NULL DEFAULT 'PENDING',
-  `last_loan_end_date` timestamp NULL DEFAULT NULL,
+  `ext_amount` int(11) DEFAULT NULL,
+  `extension_status` enum('PENDING','APPROVED','REJECTED') NOT NULL DEFAULT 'PENDING',
   `le_doc` timestamp NOT NULL DEFAULT current_timestamp(),
   `le_dom` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   `reject_comment` longtext DEFAULT NULL,
-  `le_status` enum('ACTIVE','INACTIVE') NOT NULL DEFAULT 'ACTIVE'
+  `ext_duration` int(11) DEFAULT NULL,
+  `ext_payment_mode` enum('daily','weekly','every-15-days','monthly') DEFAULT 'monthly',
+  `new_la_id` int(11) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -209,6 +212,13 @@ CREATE TABLE `loan_setting` (
   `ls_status` enum('Active','Inactive') NOT NULL DEFAULT 'Active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `loan_setting`
+--
+
+INSERT INTO `loan_setting` (`lsid`, `loan_name`, `loan_type`, `amount`, `rate_of_interest`, `process_fee_percent`, `processing_fee`, `loan_duration`, `payment_mode`, `bouncing_charges_percent`, `bouncing_charges`, `emi_amount`, `ls_doc`, `ls_dom`, `ls_status`) VALUES
+(1, 'demo loan', 'NORMAL', '10000', '5', '1', '100', '120', 'monthly', '2', '200', '3000', '2022-04-30 11:35:09', NULL, 'Active');
+
 -- --------------------------------------------------------
 
 --
@@ -252,7 +262,7 @@ CREATE TABLE `managers` (
 --
 
 INSERT INTO `managers` (`id`, `name`, `email`, `mobile`, `city`, `pass_word`, `token`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'manager 1', 'manager@gmail.com', '8319278918', 'test', 'e10adc3949ba59abbe56e057f20f883e', 'xcq2ofp3gjvcwwjq7a26v4pmfflvf5dp9wb', 'ACTIVE', '2022-02-22 12:10:07', '2022-02-22 12:10:29');
+(1, 'manager 1', 'manager@manage.com', '9999999999', 'Indore', 'fcea920f7412b5da7be0cf42b8c93759', 'k6jsjm7xiy1n2fblbwhh5zjoc85lnug379g', 'ACTIVE', '2022-05-09 11:30:28', NULL);
 
 -- --------------------------------------------------------
 
@@ -274,7 +284,7 @@ CREATE TABLE `manual_loan_setting` (
 --
 
 INSERT INTO `manual_loan_setting` (`id`, `rate_of_interest`, `process_fee_percent`, `bouncing_charges_percent`, `created_at`, `updated_at`) VALUES
-(1, '8.00', '5.00', '1.00', '2022-02-19 18:47:19', '2022-02-21 11:47:29');
+(1, '3.00', '2.00', '1.00', '2022-02-19 18:47:19', '2022-03-08 02:25:23');
 
 -- --------------------------------------------------------
 
@@ -534,7 +544,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `f_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `f_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `groups`
@@ -564,7 +574,7 @@ ALTER TABLE `loan_payments`
 -- AUTO_INCREMENT for table `loan_setting`
 --
 ALTER TABLE `loan_setting`
-  MODIFY `lsid` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `lsid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `logs`
@@ -614,7 +624,3 @@ ALTER TABLE `user_app_contacts`
 ALTER TABLE `user_app_temp_table`
   MODIFY `uatt` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

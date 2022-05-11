@@ -148,270 +148,267 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td {
     // ---------------------------------------------------------
 
 
+    var start = moment().subtract(29, 'days');
 
+    var end = moment();
 
+    function cb(start, end) {
 
-        var start = moment().subtract(29, 'days');
+        $('#advance-daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
 
-        var end = moment();
+        getLoanData();
 
-        function cb(start, end) {
+    }
 
-            $('#advance-daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+    $('#advance-daterange').daterangepicker({
 
-            getLoanData();
+        startDate: start,
 
-        }
+        endDate: end,
 
-        $('#advance-daterange').daterangepicker({
+        ranges: {
 
-            startDate: start,
+            'Today': [moment(), moment()],
 
-            endDate: end,
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
 
-            ranges: {
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
 
-               'Today': [moment(), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
 
-               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
 
-               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
 
-               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        },
 
-               'This Month': [moment().startOf('month'), moment().endOf('month')],
+        opens: 'right',
 
-               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    }, cb);
 
-            },
 
-            opens: 'right',
 
-        }, cb);
+    cb(start, end);
 
+    function getLoanData(){   
 
+        var date_range=$('#date_range_sel').html();
 
-        cb(start, end);
+        var data = {date_range:date_range,page:'<?=$sub_page?>'};
 
-        function getLoanData(){   
+        $.ajax({
 
-            var date_range=$('#date_range_sel').html();
+            method: "POST",
 
-            var data = {date_range:date_range,page:'<?=$sub_page?>'};
+            url: '<?=base_url('admin/loan/getLoanData')?>',
 
-            $.ajax({
+            data:data, 
 
-                method: "POST",
+            success:function(data)
 
-                url: '<?=base_url('admin/loan/getLoanData')?>',
+            { 
 
-                data:data, 
+                $('#filterdata').html(data);
 
-                success:function(data)
+                $('#data-table-buttons').DataTable({
 
-                { 
+                    dom: '<"dataTables_wrapper dt-bootstrap"<"row"<"col-xl-7 d-block d-sm-flex d-xl-block justify-content-center"<"d-block d-lg-inline-flex mr-0 mr-sm-3"l><"d-block d-lg-inline-flex"B>><"col-xl-5 d-flex d-xl-block justify-content-center"fr>>t<"row"<"col-sm-5"i><"col-sm-7"p>>>',
 
-                    $('#filterdata').html(data);
+                    buttons: [ {
 
-            	    $('#data-table-buttons').DataTable({
+                        extend: 'excel',
 
-            			dom: '<"dataTables_wrapper dt-bootstrap"<"row"<"col-xl-7 d-block d-sm-flex d-xl-block justify-content-center"<"d-block d-lg-inline-flex mr-0 mr-sm-3"l><"d-block d-lg-inline-flex"B>><"col-xl-5 d-flex d-xl-block justify-content-center"fr>>t<"row"<"col-sm-5"i><"col-sm-7"p>>>',
+                        className: 'btn-sm'
 
-            			buttons: [ {
+                    },{
 
-            				extend: 'excel',
+                    extend: 'colvis',
 
-            				className: 'btn-sm'
+                    className: 'btn-sm'
 
-            			},{
+                }],
 
-                        extend: 'colvis',
+                    responsive: false
 
-            			className: 'btn-sm'
+                });
 
-                    }],
-
-            			responsive: false
-
-            		});
-
-                    
-
-                }
-
-            })
-
-      
-
-            return false;
-
-        }
-
-		function getUserDetail(userid,status){
-
-		    $.ajax({
-
-		        url:'<?=site_url('admin/user/getUserDetail')?>',
-
-		        type:'POST',
-
-		        data:{'userid':userid,'status':status},
-
-		        success:function(data){
-
-		          //  console.log(data);
-
-		            $('#userdetailmodal .modal-content').html(data);
-
-		            $('#userdetailmodal').modal('show');
-
-		        }
-
-		    });
-
-		}
-
-		function updateUserdetails(form){
-
-		    var userid = $(form).data('userid');
-
-		    var formData = new FormData($(form)[0]);
-
-		    console.log(formData);
-
-		    $.ajax({
-
-		        url:'<?=site_url('admin/user/updateUserdetails/')?>'+userid,
-
-		        type:"POST",
-
-		        data:formData,
-
-		        contentType: false,
-
-                cache: false,
-
-                processData:false,
-
-		        success:function(response){
-
-		            var json = JSON.parse(response);
-
-                    if(json.status == false){
-
-                        getUserDetail(userid,json.doc_type);
-
-                    }
-
-                    alert(json.message);
-
-		        }
-
-		    });
-
-		    return false;
-
-		}
-
-		function updateloanStatus(select){ 
-
-		    var value = $(select).val();
-
-		    var la_id = $(select).data('la_id');
-
-		    if(confirm('Are You Sure to change the status')){
-
-            var message = '';
-
-            if(value=="REJECTED"){
-
-                message = prompt('Enter The Reason of rejection');
+                
 
             }
 
-            var data={value:value,la_id:la_id,message:message};
+        })
 
-            $.ajax({
+    
 
-                url:'<?=site_url('admin/loan/updateloanStatus')?>',
+        return false;
 
-                type: "POST",
+    }
 
-                data:data,
+    function getUserDetail(userid,status){
 
-                success:function(data)
+        $.ajax({
+
+            url:'<?=site_url('admin/user/getUserDetail')?>',
+
+            type:'POST',
+
+            data:{'userid':userid,'status':status},
+
+            success:function(data){
+
+                //  console.log(data);
+
+                $('#userdetailmodal .modal-content').html(data);
+
+                $('#userdetailmodal').modal('show');
+
+            }
+
+        });
+
+    }
+
+    function updateUserdetails(form){
+
+        var userid = $(form).data('userid');
+
+        var formData = new FormData($(form)[0]);
+
+        console.log(formData);
+
+        $.ajax({
+
+            url:'<?=site_url('admin/user/updateUserdetails/')?>'+userid,
+
+            type:"POST",
+
+            data:formData,
+
+            contentType: false,
+
+            cache: false,
+
+            processData:false,
+
+            success:function(response){
+
+                var json = JSON.parse(response);
+
+                if(json.status == false){
+
+                    getUserDetail(userid,json.doc_type);
+
+                }
+
+                alert(json.message);
+
+            }
+
+        });
+
+        return false;
+
+    }
+
+    function updateloanStatus(select){ 
+
+        var value = $(select).val();
+
+        var la_id = $(select).data('la_id');
+
+        if(confirm('Are You Sure to change the status')){
+
+        var message = '';
+
+        if(value=="REJECTED"){
+
+            message = prompt('Enter The Reason of rejection');
+
+        }
+
+        var data={value:value,la_id:la_id,message:message};
+
+        $.ajax({
+
+            url:'<?=site_url('admin/loan/updateloanStatus')?>',
+
+            type: "POST",
+
+            data:data,
+
+            success:function(data)
+            {
+                var response = JSON.parse( data );
+
+                if( !response.status )
                 {
-                    var response = JSON.parse( data );
-
-                    if( !response.status )
-                    {
-                        alert( response.message );
-                        location.reload();
-                    }
-                    else
-                    {
-                        alert( response.message );
-                    }
-
+                    alert( response.message );
+                    location.reload();
                 }
-
-            });
-
-		    }
-
-            
-
-        }
-
-        function UpdateDocumentStatus(col_name,value,userid){ 
-
-            var message = '';
-
-            if(value=="REJECTED"){
-
-                message = prompt('Enter The Reason of rejection');
+                else
+                {
+                    alert( response.message );
+                }
 
             }
 
-            var data={col_name:col_name,value:value,userid:userid,message:message};
+        });
 
-            $.ajax({
+        }
 
-                url:'<?=site_url('admin/user/UpdateDocumentStatus')?>',
+        
 
-                type: "POST",
+    }
 
-                data:data,
+    function UpdateDocumentStatus(col_name,value,userid){ 
 
-                success:function(data){
+        var message = '';
 
-                    console.log(data);
+        if(value=="REJECTED"){
 
-                    var json = JSON.parse(data);
+            message = prompt('Enter The Reason of rejection');
 
-                    if(json.status == false){
+        }
 
-                        getUserDetail(userid,'all');
+        var data={col_name:col_name,value:value,userid:userid,message:message};
 
-                        // $('#'+json.col_id).html(json.data);
+        $.ajax({
 
-                        // $('#userdetailmodal').modal('hide');
+            url:'<?=site_url('admin/user/UpdateDocumentStatus')?>',
 
-                    }
+            type: "POST",
 
-                    alert(json.message);
+            data:data,
 
-                    //$('#status'+id).html(data);
+            success:function(data){
+
+                console.log(data);
+
+                var json = JSON.parse(data);
+
+                if(json.status == false){
+
+                    getUserDetail(userid,'all');
+
+                    // $('#'+json.col_id).html(json.data);
+
+                    // $('#userdetailmodal').modal('hide');
 
                 }
 
-            });
+                alert(json.message);
 
-            
+                //$('#status'+id).html(data);
 
-            
+            }
 
-        }
+        });
+
+        
+
+        
+
+    }
 
     function markPaymentReceived( pay_id, amount )
     {
@@ -448,13 +445,13 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td {
 
                 if( res.success )
                 {
-                    alert( res.message );
+                    alert( res.msg );
                     
                     window.location.reload();
                 }
                 else
                 {
-                    alert( res.message );
+                    alert( res.msg );
                 }
             },
             error:function( jqxhr )

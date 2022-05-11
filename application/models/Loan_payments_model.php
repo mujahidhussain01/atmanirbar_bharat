@@ -33,7 +33,7 @@ class Loan_payments_model extends CI_Model
 
         $this->db->join( 'managers ma', 'ma.id = loan_payments.manager_id', 'left' );
 
-		$this->db->where( 'status', $status );
+		$this->db->where( 'loan_payments.status', $status );
 
 		$query = $this->db->get();
 		return $query->result_array();
@@ -44,7 +44,7 @@ class Loan_payments_model extends CI_Model
         $this->db->select('*');
 		$this->db->from( $this->table );
 
-		$this->db->where( 'status', $status );
+		$this->db->where( 'loan_payments.status', $status );
 		
 		return $this->db->count_all_results();
     }
@@ -70,7 +70,7 @@ class Loan_payments_model extends CI_Model
         $this->db->join( 'managers ma', 'ma.id = loan_payments.manager_id', 'left' );
 
 		$this->db->where( 'loan_apply_id', $loan_apply_id );
-		$this->db->order_by( 'status', 'ASC' );
+		$this->db->order_by( 'loan_payments.status', 'ASC' );
 		$query = $this->db->get();
 		return $query->result_array();
     }
@@ -90,8 +90,11 @@ class Loan_payments_model extends CI_Model
         la.loan_duration,
         la.payment_mode,
         la.payable_amt,
+        la.deduct_lic_amount,
         la.rate_of_interest,
         la.remaining_balance,
+        la.loan_closer_amount,
+        la.processing_fee,
         COALESCE ( ls.loan_type, 'Manual' ) AS loan_type,
         ma.name as manager_name
         ");
@@ -117,7 +120,7 @@ class Loan_payments_model extends CI_Model
 		return $this->db->count_all_results();
     }
 
-    public function get_all_payed_payments()
+    public function get_all_payed_payments( $minvalue, $maxvalue )
     {
         $this->db->select("
         loan_payments.*,
@@ -131,8 +134,11 @@ class Loan_payments_model extends CI_Model
         la.loan_duration,
         la.payment_mode,
         la.payable_amt,
+        la.deduct_lic_amount,
         la.rate_of_interest,
         la.remaining_balance,
+        la.loan_closer_amount,
+        la.processing_fee,
         COALESCE ( ls.loan_type, 'Manual' ) AS loan_type,
         ma.name as manager_name
         ");
@@ -144,6 +150,9 @@ class Loan_payments_model extends CI_Model
         $this->db->join( 'loan_setting ls','la.loan_id = ls.lsid', 'left' );
 
 		$this->db->where( 'loan_payments.status', 'ACTIVE' );
+
+        $this->db->where("loan_payments.amount_received_at BETWEEN '$minvalue' AND '$maxvalue'");
+
 		$this->db->order_by( 'loan_payments.amount_received_at', 'DESC' );
 		$query = $this->db->get();
 		return $query->result_array();
@@ -153,7 +162,7 @@ class Loan_payments_model extends CI_Model
     {
         $this->db->select('*');
 		$this->db->from( 'loan_payments' );
-		$this->db->where( 'status', 'ACTIVE' );
+		$this->db->where( 'loan_payments.status', 'ACTIVE' );
 
 		return $this->db->count_all_results();
     }
@@ -173,8 +182,11 @@ class Loan_payments_model extends CI_Model
         la.loan_duration,
         la.payment_mode,
         la.payable_amt,
+        la.deduct_lic_amount,
         la.rate_of_interest,
         la.remaining_balance,
+        la.loan_closer_amount,
+        la.processing_fee,
         COALESCE ( ls.loan_type, 'Manual' ) AS loan_type,
         "
         );
@@ -222,9 +234,9 @@ class Loan_payments_model extends CI_Model
                 loan_payments.updated_at
         ');
 		$this->db->from( 'loan_payments' );
-		$this->db->join('managers','ma.id = loan_payments.manager_id', 'left');
+		$this->db->join('managers ma','ma.id = loan_payments.manager_id', 'left');
 
-		$this->db->where( 'loan_payments.status', 'ACTIVE' );
+		$this->db->where( 'loan_payments.status', 'INACTIVE' );
 		$this->db->where( 'loan_payments.user_id', $user_id );
 		$query = $this->db->get();
 		return $query->result_array();
@@ -238,9 +250,9 @@ class Loan_payments_model extends CI_Model
 
         $this->db->join( 'managers ma', 'ma.id = loan_payments.manager_id', 'left' );
         
-		$this->db->order_by( 'id', 'ASC' );
-		$this->db->where( 'status', 'INACTIVE' );
-		$this->db->where( 'user_id', $user_id )->limit( 1 );
+		$this->db->order_by( 'loan_payments.id', 'ASC' );
+		$this->db->where( 'loan_payments.status', 'INACTIVE' );
+		$this->db->where( 'loan_payments.user_id', $user_id )->limit( 1 );
 		$query = $this->db->get();
 		return $query->row_array();
     }
@@ -275,6 +287,13 @@ class Loan_payments_model extends CI_Model
 	{
 		return $this->db->insert_batch( $this->table, $data);
 	}
+
+    public function delete_inactive_payments_where_loan_id( $loan_id )
+    {
+        return $this->db->where(  'loan_apply_id', intval( $loan_id ) )
+        ->where( 'status', 'INACTIVE' )
+        ->delete( $this->table );
+    }
 
 
     

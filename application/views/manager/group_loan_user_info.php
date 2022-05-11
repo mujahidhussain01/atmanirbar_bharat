@@ -40,30 +40,35 @@
                                         <h4 class="panel-title text-capitalize">
 
                                             <div>
-                                            <?= $loan['first_name'] . ' ' . $loan['last_name'] . ' (' . $loan['mobile'] . ')' ?>
+                                            <strong><?= $loan['first_name'] . ' ' . $loan['last_name'] . ' (' . $loan['mobile'] . ')' ?></strong>
                                             </div>
                                             
-                                            <div class="mt-1">
-                                            Loan Type : <?php echo $loan[ 'loan_type' ]?>
+                                            <div class="my-1">
+                                            <strong>Loan Type :</strong> <?php echo $loan[ 'loan_type' ]?>
                                             </div>
 
-                                            <div class="mt-1">
-                                            Loan Amount : ₹<?php echo $loan[ 'amount' ]?>
+                                            <div class="my-1">
+                                            <strong>Loan Amount :</strong> ₹<?php echo $loan[ 'amount' ]?>
                                             </div>
 
-                                            <div class="mt-1">
-                                            EMI Amount : ₹<?= $loan['emi_amount'] ?>
+                                            <div class="my-1">
+                                            <strong>EMI Amount : </strong>₹<?= $loan['emi_amount'] ?>
                                             </div>
+
+                                            <div class="my-1">
+                                            <strong>Rate Of Interest :</strong> <?= $loan['rate_of_interest'] ?>%
+                                            </div>
+
 
                                             <?php if( $sub_page == 'My Running Loans' ):?>
 
-                                                <div class="mt-1">
-                                                Remaining Balance : ₹<?= $loan['remaining_balance'] ?>
+                                                <div class="my-1">
+                                               <strong> Remaining Balance :</strong> ₹<?= $loan['remaining_balance'] ?>
                                                 </div>
                                             
                                             <?php endif;?>
                                             <div class="my-1">
-                                                Status : <?php if ($loan['loan_status'] == 'PAID') : ?>
+                                                <strong>Status :</strong> <?php if ($loan['loan_status'] == 'PAID') : ?>
                                                     <span class="badge badge-success">Closed</span>
                                                 <?php elseif ($loan['loan_status'] == 'RUNNING') : ?>
                                                     <span class="badge badge-primary">Running</span>
@@ -102,11 +107,23 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Processing Fee</th>
-                                                    <td><?= ($loan['loan_panelty_amount'] ? '₹ ' . $loan['loan_panelty_amount'] : 'NA') ?></td>
+                                                    <td>₹<?= $loan['processing_fee']?></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Deduct 1% LIC Amount</th>
+                                                    <td><?= $loan['deduct_lic_amount']?></td>
                                                 </tr>
                                                 <tr>
                                                     <th>Loan Closer Amount</th>
                                                     <td>₹<?= $loan['loan_closer_amount'] ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Loan Duration</th>
+                                                    <td><?= $loan['loan_duration'] ?> Days</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Payment Mode</th>
+                                                    <td><?= $loan['payment_mode'] ?></td>
                                                 </tr>
                                                 <tr>
                                                     <th>Loan Created Date</th>

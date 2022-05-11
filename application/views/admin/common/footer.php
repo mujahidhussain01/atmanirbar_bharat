@@ -18,18 +18,6 @@
 		<script src="<?php echo base_url()?>assets/plugins/pdfmake/build/pdfmake.min.js"></script>
 		<script src="<?php echo base_url()?>assets/plugins/pdfmake/build/vfs_fonts.js" type="text/javascript"></script>
 		<script src="<?php echo base_url()?>assets/plugins/jszip/dist/jszip.min.js" type="text/javascript"></script>
-        <script>
-            function refreshPanelty(){
-                $.ajax({
-                    url:'<?=site_url('cronjob/generate_panelty')?>',
-                    type: "POST",
-                    success:function(data){
-                        location.reload();
-                    }
-                });
-            }
-        </script>
-
 
 			</body>
 </html>

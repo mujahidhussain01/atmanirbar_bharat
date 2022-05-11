@@ -17,8 +17,8 @@ class Welcome extends CI_Controller {
         }
 
 		$this->load->model('User_model');
-
 		$this->load->model('Loan_apply_model');
+		$this->load->model('Loan_extension_model');
 		$this->load->model('Loan_payments_model');
 
 

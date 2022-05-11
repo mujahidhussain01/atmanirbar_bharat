@@ -56,6 +56,28 @@
                 <div class="panel-body">
 
                     <div class='row '>
+
+                    <?php if( $sub_page == 'payed_payments' ):?>
+
+                        <form class="col-12 row">
+                            <div class='col-12 col-lg-5 mb-3'>
+
+                                <div id="advance-daterange" class="btn btn-white btn-block text-left p-0">
+
+                                    <input type="text" name="date_range" id="date_range_sel" class="form-control"></span>
+
+                                </div>
+
+                            </div>
+
+                            <div class='col-12 col-lg-5 mb-3'>
+                                <button class="btn btn-primary" type="submit" >Filter Date</button>
+                            </div>
+                        </form>
+
+                    <?php endif;?>
+
+
                         <div class="col-12 table-responsive">
                             <table id="payments_data_table" class="table table-centered table-bordered table-condensed table-nowrap">
                                 <thead>
@@ -81,23 +103,45 @@
                                             <tr>
                                                 <td><?php echo ++$key ?></td>
                                                 <td>
-                                                    <ul class="list-unstyled">
-                                                        <li class="my-2"><strong>Loan ID : </strong> <?= $payment[ 'la_id' ] ?></li>
-                                                        <li class="my-2"><strong>Loan Type : </strong> <?= $payment[ 'loan_type' ] ?></li>
-                                                        <li class="my-2"><strong>Amount : </strong> <?= ( $payment[ 'loan_amount' ] ? '₹' . $payment[ 'loan_amount' ] : 'NA' ) ?></li>
-                                                        <li class="mt-2"><strong>Rate Of Interest : </strong> <?= $payment['rate_of_interest']?>%</li>
-                                                        <li class="my-2"><strong>Loan Duration : </strong> <?= $payment[ 'loan_duration' ] ?> Days</li>
-                                                        <li class="my-2"><strong>Payment Mode : </strong> <?= $payment[ 'payment_mode' ] ?></li>
-                                                        <li class="my-2"><strong>Payable Amount : </strong> ₹<?= $payment[ 'payable_amt' ] ?></li>
-                                                        <li class="my-2"><strong>Remaining Balance : </strong> ₹<?= $payment[ 'remaining_balance' ] ?></li>
-                                                        
-                                                    </ul>
+                                                <ul class="list-unstyled">
+											<li class="mt-2"><strong>Loan ID : </strong> <?= $payment['la_id']?></li>
+											<li class="mt-2"><strong>Loan Type : </strong> <?= $payment['loan_type']?></li>
+											<li class="mt-2"><strong>Amount : </strong> <?=( $payment['amount']?'₹'. $payment['amount']:'NA')?></li>
+
+											
+											<li class="mt-2">
+											<strong>Processing Fees : </strong> <?=( $payment['processing_fee']?'₹'. $payment['processing_fee']:'NA')?>
+											</li>
+											<li class="mt-2">
+											<strong>Payable Amount : </strong> <?=( $payment['payable_amt']?'₹'. $payment['payable_amt']:'NA')?>
+											</li>
+
+											<li class="mt-2">
+											<strong>Deduct 1% LIC Amount : </strong> <?=$payment['deduct_lic_amount']?>
+											</li>
+
+											<li class="mt-2">
+											<strong>Final Loan Amount : </strong> <?=( $payment['loan_closer_amount']?'₹'. $payment['loan_closer_amount']:'NA')?>
+											</li>
+											<li class="mt-2">
+											<strong>Remaining Balance : </strong> <?=( $payment['remaining_balance']?'₹'. $payment['remaining_balance']:'NA')?>
+											</li>
+
+											<li>
+												<a href="<?= base_url( 'admin/loan/details/'.$payment[ 'la_id' ] )?>">
+													<button type="button" class="btn btn-primary btn-sm my-2">
+														View Loan Details
+													</button>
+												</a>
+											</li>
+
+										</ul>
                                                 </td>
                                                 <td>
                                                     <ul class="list-unstyled">
                                                         <li class="my-2"><strong>User Name : </strong> <?= $payment[ 'first_name' ].' '.$payment[ 'last_name' ] ?></li>
                                                         <li class="my-2"><strong>Email : </strong> <?= $payment[ 'email' ]?></li>
-                                                        <li class="my-2"><strong>Mobile : </strong> <?= $payment[ 'mobile' ] ?> Days</li>
+                                                        <li class="my-2"><strong>Mobile : </strong> <?= $payment[ 'mobile' ] ?></li>
                                                         <li class="my-2"><strong>City : </strong> <?= $payment[ 'city' ] ?></li>
                                                     </ul>
 
@@ -198,10 +242,68 @@
 
 <script>
     $(document).ready(function() {
-        $('#payments_data_table').DataTable();
-    });
+        
+        <?php if( $sub_page == 'payed_payments' ):?>
 
-    <?php if (@$sub_page != 'payed_payments') : ?>
+            <?php if( $daterange_param =  $this->input->get( 'date_range' ) ):?>
+
+                <?php
+                    $daterange = explode('-', $daterange_param );
+                    
+                    $minvalue = date('Y-m-d',strtotime($daterange[0])).' 00:00:00';
+                    $maxvalue = date('Y-m-d',strtotime($daterange[1])).' 23:59:59';
+                ?>
+
+                var start = moment('<?= $minvalue?>');
+                var end = moment( '<?= $maxvalue?>' );
+
+            <?php else:?>
+
+                var start = moment().subtract(29, 'days');
+                var end = moment();
+                
+            <?php endif;?>
+
+        function cb(start, end) {
+
+            $('#advance-daterange #date_range_sel').val(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+
+        }
+
+        $('#advance-daterange').daterangepicker({
+
+            startDate: start,
+
+            endDate: end,
+
+            ranges: {
+
+            'Today': [moment(), moment()],
+
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+
+            },
+
+            opens: 'right',
+
+        }, cb);
+
+
+
+        cb(start, end);
+        <?php endif;?>
+
+$('#payments_data_table').DataTable();
+
+    });
 
         function markPaymentReceived(pay_id, amount) {
             var received_amount = prompt('Enter Amount Received', amount);
@@ -232,11 +334,11 @@
                     var res = JSON.parse(data);
 
                     if (res.success) {
-                        alert(res.message);
+                        alert(res.msg);
 
                         window.location.reload();
                     } else {
-                        alert(res.message);
+                        alert(res.msg);
                     }
                 },
                 error: function(jqxhr) {
@@ -246,5 +348,4 @@
             });
         }
 
-    <?php endif; ?>
 </script>

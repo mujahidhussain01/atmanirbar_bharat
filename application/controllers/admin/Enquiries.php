@@ -30,6 +30,7 @@ class Enquiries extends CI_Controller {
 
 		$this->load->model('Loan_payments_model');
 
+        $this->load->model( 'Loan_extension_model' );
 
 
 
