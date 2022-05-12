@@ -496,6 +496,29 @@ class Loan extends CI_Controller {
 
 		$this->load->model( 'loan_extension_model' );
 
+		$this->data[ 'loan_name' ] = '';
+
+		if( $this->data[ 'loan_details' ][ 'loan_type' ] == 'NORMAL' )
+		{
+			$this->load->model( 'Loan_setting_model' );
+
+			$get_loan_name = $this->Loan_setting_model->get_loan_name( $this->data[ 'loan_details' ][ 'loan_id' ] );
+
+			if( $get_loan_name )
+			{
+				$this->data[ 'loan_name' ] = $get_loan_name[ 'loan_name' ];
+			}
+		}
+		else if( $this->data[ 'loan_details' ][ 'loan_type' ] == 'GROUP' )
+		{
+			 // $get_loan_name = $this->Loan_setting_model->get_loan_name( $loan_details[ 'loan_id' ] );
+
+			 // if( $get_loan_name )
+			 // {
+			 //     $loan_name = $get_loan_name[ 'loan_name' ];
+			 // }
+		}
+
 	    $this->data['loan_extension'] = $this->loan_extension_model->get_single_extension_by_loan_id( intval( $loan_id ) );
 
 	    $this->load->view('admin/loan_details',$this->data);

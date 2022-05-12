@@ -28,31 +28,26 @@
 
             <hr>
 
-
-
             <?php if (!empty($group_loans)) : ?>
-
                 <div class="panel-group" id="accordion">
-
-
                     <?php foreach ($group_loans as $key => $loan) : ?>
 
                         <div class="card">
-                        <a href="<?=base_url()?>manager/group_loans/loan_info/<?=$loan[ 'lsid' ] ?>">
-                            <div class="card-header">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h5 class="panel-title text-capitalize">
-                                           <strong><?=  ( $key+1 ).'. '.$loan['loan_name']?> ( ₹<?=$loan[ 'amount' ] ?> )</strong>
-                                           <div class="m-1">
-                                           <strong>Active Users Count : </strong><?= $this->Loan_apply_model->get_group_loan_user_count( $loan[ 'lsid' ] )?>
-                                           </div>
-                                           
-                                        </h5>
+                            <a href="<?=base_url()?>manager/group_loans/loan_info/<?=$loan[ 'id' ] ?>">
+                                <div class="card-header">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h5 class="panel-title text-capitalize">
+                                            <strong><?=  ( $key+1 ).'. '.$loan['name']?> ( ₹<?=$loan[ 'total_amount' ] ?> )</strong>
+                                            <div class="m-1">
+                                            <strong>Active Users Count : </strong><?= $this->Loan_apply_model->get_group_loan_user_count( $loan[ 'id' ] )?>
+                                            </div>
+                                            
+                                            </h5>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
+                            </a>
                         </div>
 
                     <?php endforeach; ?>

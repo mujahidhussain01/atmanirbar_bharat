@@ -21,11 +21,9 @@ class Loan_apply_model extends CI_Model
 	{
 		$this->db->select("
 		la.*,
-		COALESCE (ls.loan_type, 'Manual') AS loan_type,
 		ma.name as manager_name");
 		$this->db->from('loan_apply la');
 
-		$this->db->join('loan_setting ls','la.loan_id=ls.lsid', 'left' );
 		$this->db->join('managers ma','ma.id = la.manager_id', 'left');
 		$this->db->join('user u','u.userid=la.user_id');
 		
@@ -46,13 +44,11 @@ class Loan_apply_model extends CI_Model
 		$this->db->select("
 		u.*,
 		la.*,
-		COALESCE (ls.loan_type, 'Manual') AS loan_type,
 		ma.name as manager_name");
 		$this->db->from('loan_apply la');
 
 		$this->db->join('user u','u.userid=la.user_id');
 		$this->db->join('managers ma','ma.id = la.manager_id', 'left');
-		$this->db->join('loan_setting ls','la.loan_id=ls.lsid', 'left');
 
 		$this->db->where('la.la_id',$la_id);
 		if( $where )
@@ -68,13 +64,11 @@ class Loan_apply_model extends CI_Model
 		$this->db->select("
 		u.*,
 		la.*,
-		COALESCE (ls.loan_type, 'Manual') AS loan_type,
 		ma.name as manager_name");
 
 		$this->db->from('loan_apply la');
 
 		$this->db->join('managers ma','ma.id = la.manager_id', 'left');
-		$this->db->join('loan_setting ls','la.loan_id=ls.lsid', 'left' );
 		$this->db->join('user u','u.userid=la.user_id' );
 
 		$this->db->where( $where );
@@ -89,11 +83,9 @@ class Loan_apply_model extends CI_Model
 		$this->db->select("
 		u.*,
 		la.*,
-		COALESCE (ls.loan_type, 'Manual') AS loan_type,
 		ma.name as manager_name");
 		$this->db->from('loan_apply la');
 
-		$this->db->join('loan_setting ls','la.loan_id=ls.lsid', 'left' );
 		$this->db->join('managers ma','ma.id = la.manager_id', 'left');
 		$this->db->join('user u','u.userid=la.user_id');
 
@@ -206,11 +198,9 @@ class Loan_apply_model extends CI_Model
 	{
 		$this->db->select("
 		la.*,
-		COALESCE (ls.loan_type, 'Manual') AS loan_type,
 		ma.name as manager_name");
 		$this->db->from('loan_apply la');
 
-		$this->db->join('loan_setting ls','la.loan_id=ls.lsid', 'left' );
 		$this->db->join('managers ma','ma.id = la.manager_id', 'left');
 
 		$this->db->where('la.user_id',$user_id);
@@ -323,10 +313,8 @@ class Loan_apply_model extends CI_Model
 		$this->db->select("
 		u.*,
 		la.*,
-		COALESCE (ls.loan_type, 'Manual') AS loan_type,
 		ma.name as manager_name");
 		$this->db->from('loan_apply la');
-		$this->db->join('loan_setting ls','ls.lsid=la.loan_id', 'left');
 		$this->db->join('managers ma','ma.id=la.manager_id', 'left');
 		$this->db->join('user u','u.userid=la.user_id');
 		if($status != NULL){

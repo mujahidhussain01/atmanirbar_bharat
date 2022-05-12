@@ -64,7 +64,7 @@ class Loan_extension_model extends CI_Model
     public function get_extentions_by_status($status){
 		$this->db->select('
 la.la_id,
-ls.loan_type,
+la.loan_type,
 la.amount,
 la.rate_of_interest,
 la.processing_fee,
@@ -87,7 +87,6 @@ le.*,
 		');
 		$this->db->from('loan_extension le');
 		$this->db->join('loan_apply la','le.la_id=la.la_id');
-		$this->db->join('loan_setting ls','ls.lsid=la.loan_id');
 		$this->db->join('managers ma','ma.id = la.manager_id', 'left');
 		$this->db->join('user u','u.userid=le.user_id');
         $this->db->where('le.extension_status',$status);

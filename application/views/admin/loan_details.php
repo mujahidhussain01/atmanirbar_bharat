@@ -70,6 +70,15 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td {
                                     <div class="col-md-6 p-25 border-bottom"><?= $loan_details['loan_type']?></div>
                                 </div>
 
+                                <?php if( !empty( $loan_name ) ):?>
+
+                                <div class="col-12 row">
+                                    <div class="col-md-6 p-25 border-bottom"> <strong> <?= $loan_details[ 'loan_type' ]?> Loan Name</strong> </div>
+                                    <div class="col-md-6 p-25 border-bottom"><?= $loan_name?></div>
+                                </div>
+                                    
+                                <?php endif;?>
+
                             </div>
 
                             <div class="row col-12">

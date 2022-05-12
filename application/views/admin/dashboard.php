@@ -206,7 +206,7 @@
 
 					<div class="stats-icon"><i class="fa fa-funnel-dollar"></i></div>
 
-					<div class="stats-warning">
+					<div class="stats-info">
 
 						<h4>Upcoming Payments</h4>
 
@@ -347,7 +347,7 @@
 
 					<div class="stats-icon"><i class="far fa-question-circle"></i></div>
 
-					<div class="stats-warning">
+					<div class="stats-info">
 
 						<h4>New Help</h4>
 

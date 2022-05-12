@@ -127,7 +127,7 @@ class Loan extends REST_Controller
 		}
 		
 
-		if( $loan = $this->Loan_setting_model->getloan_setting( $this->input->post( 'loan_id', true ), 'NORMAL' ))
+		if( $loan = $this->Loan_setting_model->getloan_setting( $this->input->post( 'loan_id', true ) ) )
 		{
 			// calculate loan data ----
 
@@ -198,6 +198,7 @@ class Loan extends REST_Controller
 
 			$data['user_id'] = $userdata->userid;
 			$data['loan_id'] = $loan[ 'lsid' ];
+			$data['loan_type'] = 'NORMAL';
 			$data['amount'] = $loan_amount;
 			$data['rate_of_interest'] = $rate_of_interest;
 			$data['monthly_interest'] = $interest_amount_initial;
@@ -543,6 +544,7 @@ class Loan extends REST_Controller
 
 
 		$data['user_id'] = $userdata->userid;
+		$data['loan_type'] = 'MANUAL';
 		$data['amount'] = $loan_amount;
 		$data['rate_of_interest'] = $rate_of_interest;
 		$data['monthly_interest'] = $interest_amount_initial;

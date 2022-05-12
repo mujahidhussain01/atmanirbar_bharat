@@ -29,7 +29,7 @@ class Home extends CI_Controller
         }
         
         $this->load->model( 'Loan_apply_model' );
-
+        $this->load->model( 'Group_loans_model' );
     }
     
 

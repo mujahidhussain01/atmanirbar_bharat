@@ -280,18 +280,6 @@
 
 			</li>
 
-			<li class="<?= (@$page == 'group_loan_settings' ? 'active' : '') ?> my-3">
-
-			<a href="<?php echo base_url() ?>admin/group_loan_settings/view_group_loan_setting">
-
-				<i class="fas fa-users"></i>
-
-				<span>Group Loan Settings</span>
-
-			</a>
-
-			</li>
-
 			<li class="<?= (@$page == 'manual_loan_setting' ? 'active' : '') ?>">
 
 				<a href="<?php echo base_url() ?>admin/manual_loan_setting/view_manual_loan_setting">
@@ -302,7 +290,19 @@
 
 				</a>
 
-				</li>
+			</li>
+
+			<li class="<?= (@$page == 'Group Loans' ? 'active' : '') ?> my-3">
+
+				<a href="<?php echo base_url() ?>admin/group_loans">
+
+					<i class="fas fa-users"></i>
+
+					<span>Group Loans</span>
+
+				</a>
+
+			</li>
 
 <hr class="mt-4">
 

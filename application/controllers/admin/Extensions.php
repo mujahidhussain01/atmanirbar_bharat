@@ -141,6 +141,7 @@ class Extensions extends CI_Controller {
 
 			$new_loan['user_id'] = $current_loan[ 'user_id' ];
 			$new_loan['loan_id'] = $current_loan[ 'loan_id' ];
+			$new_loan['loan_type'] = $current_loan[ 'loan_type' ];
 			$new_loan['manager_id'] = $current_loan[ 'manager_id' ];
 			$new_loan['amount'] = $loan_amount;
 			$new_loan['rate_of_interest'] = $rate_of_interest;

@@ -3,6 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Group_loans extends CI_Controller
 {
+
+    public $data = [
+        'page' => 'Group Loans'
+    ];
+
     public function __construct()
     {
         parent::__construct();
@@ -27,7 +32,8 @@ class Group_loans extends CI_Controller
             $this->session->manager =  $manager[ 'name' ];
             $this->session->manager_id =  $manager[ 'id' ];
         }
-        $this->load->model( 'Loan_setting_model' );
+
+        $this->load->model( 'Group_loans_model' );
         $this->load->model( 'Loan_apply_model' );
         $this->load->model( 'User_model' );
     }
@@ -35,27 +41,25 @@ class Group_loans extends CI_Controller
 
     public function index()
     {
-        $data[ 'page' ] = 'Group Loans';
-        $data[ 'sub_page' ] = 'Group Loans List';
-        $data[ 'search' ] = trim( $this->input->get( 'search', true ) );
+        $this->data[ 'sub_page' ] = 'Group Loans List';
+        $this->data[ 'search' ] = trim( $this->input->get( 'search', true ) );
 
-        if( !empty( $data[ 'search' ] ) )
+        if( !empty( $this->data[ 'search' ] ) )
         {
-            $data[ 'group_loans' ] = $this->Loan_setting_model->get_group_loan_settings_for_manager( $data[ 'search' ] );
+            $this->data[ 'group_loans' ] = $this->Group_loans_model->get_all_group_loans_with_amount_count( $this->data[ 'search' ] );
         }
         else
         {
-            $data[ 'group_loans' ] = $this->Loan_setting_model->get_group_loan_settings_for_manager();
+            $this->data[ 'group_loans' ] = $this->Group_loans_model->get_all_group_loans_with_amount_count();
         }
 
-        $this->load->view( 'manager/group_loans', $data );
+        $this->load->view( 'manager/group_loans', $this->data );
     }
 
     public function loan_info( $id )
     {
-        $data[ 'page' ] = 'Group Loans';
         $data[ 'sub_page' ] = 'Loan Info';
-        $data[ 'group_loan' ] = $this->Loan_setting_model->get_single_group_loan_setting_for_manager( intval( $id ) );
+        $data[ 'group_loan' ] = $this->Loan_setting_model->get_single_group_loans_for_manager( intval( $id ) );
 
         $data[ 'search' ] = trim( $this->input->get( 'search', true ) );
 
@@ -74,7 +78,6 @@ class Group_loans extends CI_Controller
 
     public function loan_user_info( $la_id )
     {
-        $data[ 'page' ] = 'Group Loans';
         $data[ 'sub_page' ] = 'Loan Details';
         $data[ 'loan' ] = $this->Loan_apply_model->getloandetail2( intval( $la_id ) );
 
@@ -84,10 +87,9 @@ class Group_loans extends CI_Controller
 
     public function loan_add_user( $id )
     {
-        $data[ 'page' ] = 'Group Loans';
         $data[ 'mobile' ] = '';
         $data[ 'sub_page' ] = 'Add User';
-        $data[ 'group_loan_info' ] = $this->Loan_setting_model->get_single_group_loan_setting_for_manager( intval( $id ) );
+        $data[ 'group_loan_info' ] = $this->Loan_setting_model->get_single_group_loans_for_manager( intval( $id ) );
 
         $this->load->view( 'manager/group_loan_add_user', $data );
     }
@@ -96,9 +98,8 @@ class Group_loans extends CI_Controller
     
     public function user_otp_send( $id )
     {
-        $data[ 'page' ] = 'Group Loans';
         $data[ 'sub_page' ] = 'Add User';
-        $data[ 'group_loan_info' ] = $this->Loan_setting_model->get_single_group_loan_setting_for_manager( intval( $id ) );
+        $data[ 'group_loan_info' ] = $this->Loan_setting_model->get_single_group_loans_for_manager( intval( $id ) );
 
         $mobile = $this->input->post( 'user_contact', true );
 
@@ -120,7 +121,6 @@ class Group_loans extends CI_Controller
 
         // Send OTP Here -------
 
-        $data[ 'page' ] = 'Group Loans';
         $data[ 'otp_val' ] = '';
         $data[ 'sub_page' ] = 'OTP Verify';
 
@@ -130,9 +130,8 @@ class Group_loans extends CI_Controller
 
     public function user_otp_verify( $id )
     {
-        $data[ 'page' ] = 'Group Loans';
         $data[ 'sub_page' ] = 'OTP Verify';
-        $data[ 'group_loan_info' ] = $this->Loan_setting_model->get_single_group_loan_setting_for_manager( intval( $id ) );
+        $data[ 'group_loan_info' ] = $this->Loan_setting_model->get_single_group_loans_for_manager( intval( $id ) );
 
         $mobile = $this->input->post( 'user_contact', true );
         $otp_val = $this->input->post( 'otp_val', true );
@@ -264,7 +263,6 @@ class Group_loans extends CI_Controller
         // apply for Loan Here ---------
         if( $this->Loan_apply_model->insert( $loan_apply ) )
         {
-            $data[ 'page' ] = 'Group Loans';
             $data[ 'sub_page' ] = 'Loan Applied Success';
             $this->load->view( 'manager/group_loan_success', $data );
         }

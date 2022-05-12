@@ -95,16 +95,14 @@ class Loan_payments_model extends CI_Model
         la.remaining_balance,
         la.loan_closer_amount,
         la.processing_fee,
-        COALESCE ( ls.loan_type, 'Manual' ) AS loan_type,
+        la.loan_type,
         ma.name as manager_name
         ");
 		$this->db->from( $this->table );
 
         $this->db->join( 'loan_apply la','la.la_id = loan_payments.loan_apply_id' );
 		$this->db->join( 'user u','u.userid = loan_payments.user_id' );
-        $this->db->join( 'loan_setting ls','la.loan_id = ls.lsid', 'left' );
         $this->db->join( 'managers ma','ma.id = loan_payments.manager_id', 'left' );
-
 
 		$this->db->where( 'payment_date', $date );
 		$query = $this->db->get();
@@ -139,7 +137,7 @@ class Loan_payments_model extends CI_Model
         la.remaining_balance,
         la.loan_closer_amount,
         la.processing_fee,
-        COALESCE ( ls.loan_type, 'Manual' ) AS loan_type,
+        la.loan_type,
         ma.name as manager_name
         ");
 		$this->db->from( 'loan_payments' );
@@ -147,7 +145,6 @@ class Loan_payments_model extends CI_Model
         $this->db->join( 'loan_apply la','la.la_id = loan_payments.loan_apply_id' );
 		$this->db->join( 'user u','u.userid = loan_payments.user_id' );
 		$this->db->join( 'managers ma','ma.id = loan_payments.manager_id', 'left');
-        $this->db->join( 'loan_setting ls','la.loan_id = ls.lsid', 'left' );
 
 		$this->db->where( 'loan_payments.status', 'ACTIVE' );
 
@@ -187,14 +184,13 @@ class Loan_payments_model extends CI_Model
         la.remaining_balance,
         la.loan_closer_amount,
         la.processing_fee,
-        COALESCE ( ls.loan_type, 'Manual' ) AS loan_type,
+        la.loan_type,
         "
         );
 		$this->db->from( $this->table );
 
         $this->db->join( 'loan_apply la','la.la_id = loan_payments.loan_apply_id' );
 		$this->db->join( 'user u','u.userid = loan_payments.user_id' );
-        $this->db->join( 'loan_setting ls','la.loan_id = ls.lsid', 'left' );
 
         $this->db->group_by( 'loan_payments.loan_apply_id' );
 		$this->db->order_by( 'id', 'ASC' );
