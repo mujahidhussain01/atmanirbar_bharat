@@ -32,7 +32,20 @@
                                         <div class="col-6 p-2 border-bottom"><?= $loan_details['loan_type'] ?></div>
                                     </div>
 
+                                   
+
                                 </div>
+                                
+                                <?php if( !empty( $loan_name ) ):?>
+
+                                    <div class="col-12">
+                                        <div class="col-12 row m-0 p-0">
+                                            <div class="col-6 p-2 border-bottom"> <strong> <?= $loan_details[ 'loan_type' ]?> Loan Name</strong> </div>
+                                            <div class="col-6 p-2 border-bottom"><?= $loan_name?></div>
+                                        </div>
+                                    </div>
+
+                                <?php endif;?>
 
                                 <div class="col-12">
 
@@ -115,7 +128,7 @@
                                     </div>
 
                                     <div class="col-12 row m-0 p-0">
-                                        <div class="col-6 p-2 border-bottom"> <strong> Claimed By </strong> </div>
+                                        <div class="col-6 p-2 border-bottom"> <strong> Requested By Manager </strong> </div>
                                         <div class="col-6 p-2 border-bottom"><?= $loan_details['manager_name'] ? $loan_details['manager_name'] . ' ( Manager ) ' : 'NONE' ?></div>
                                     </div>
 
@@ -131,6 +144,24 @@
                                     <div class="col-12 row m-0 p-0">
                                         <div class="col-6 p-2 border-bottom"> <strong> Loan Status </strong> </div>
                                         <div class="col-6 p-2 border-bottom"><?= $loan_details['loan_status'] ?></div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-12">
+
+                                    <div class="col-12 row m-0 p-0">
+                                        <div class="col-6 p-2 border-bottom"> <strong>Loan Start Date </strong> </div>
+                                        <div class="col-6 p-2 border-bottom">
+                                            <?= $loan_details[ 'loan_start_date' ] ? date( 'Y-m-d', strtotime( $loan_details[ 'loan_start_date' ] )) : '' ?>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 row m-0 p-0">
+                                        <div class="col-6 p-2 border-bottom"> <strong>Loan End Date</strong> </div>
+                                        <div class="col-6 p-2 border-bottom">
+                                            <?= $loan_details[ 'loan_end_date' ] ? date( 'Y-m-d', strtotime( $loan_details[ 'loan_end_date' ] )) : '' ?>
+                                        </div>
                                     </div>
 
                                 </div>

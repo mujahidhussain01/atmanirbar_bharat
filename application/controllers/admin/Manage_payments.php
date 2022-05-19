@@ -140,7 +140,10 @@ class Manage_payments extends CI_Controller
         show_404();
 
         if( $this->data[ 'loan_details' ][ 'loan_status' ] != 'RUNNING' )
-        show_error( 'Loan Is Not In Running Condition', 201, 'Cannot ForeClose Loan' );
+        {
+            show_error( 'Loan Is Not In Running Condition', 201, 'Cannot ForeClose Loan' );
+            return;
+        }
 
         $current_month = date_create( date( 'Y-m-d' ) );
         $last_month = date_create( date( 'Y-m', strtotime( $this->data[ 'loan_details' ][ 'loan_last_date' ] ) ) );

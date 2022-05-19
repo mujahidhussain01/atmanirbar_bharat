@@ -28,7 +28,7 @@ class Group_loans extends CI_Controller
 
     public function index()
     {
-        $this->data['data'] = $this->Group_loans_model->get_all_group_loans();
+        $this->data['data'] = $this->Group_loans_model->get_all_group_loans_with_amount_count_admin();
         $this->load->view('admin/group_loans',$this->data);
     }
 

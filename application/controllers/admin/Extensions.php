@@ -99,14 +99,14 @@ class Extensions extends CI_Controller {
 				$interest_amount = $interest_amount_initial;
 			}
 			
-			$processing_fee = ceil( ( $loan_amount / 100 ) * $process_fee_percent );
+			$processing_fee = ceil( ( intval( $loan_extension[ 'ext_amount' ] ) / 100 ) * $process_fee_percent );
 			$bouncing_charges = ceil( ( $loan_amount / 100 ) * $bouncing_charges_percent );
 
 			$one_percent = 0;
 			
 			if( $deduct_lic_amount == 'YES' )
 			{
-				$one_percent = ceil( $loan_amount / 100 );
+				$one_percent = ceil( intval( $loan_extension[ 'ext_amount' ] ) / 100 );
 				$loan_closer_amount = $loan_amount + $interest_amount + $one_percent;
 			}
 			else
@@ -154,7 +154,7 @@ class Extensions extends CI_Controller {
 			$new_loan['bouncing_charges'] = $bouncing_charges;
 			$new_loan['reject_comment'] = 'Your loan application is under process please wait for the approval';
 			$new_loan['emi_amount'] = $emi_amount;
-			$new_loan['payable_amt'] = $loan_amount - $processing_fee;
+			$new_loan['payable_amt'] = intval( $loan_extension[ 'ext_amount' ] ) - $processing_fee;
 			$new_loan['remaining_balance'] = $loan_closer_amount;
 			$new_loan['loan_closer_amount'] = $loan_closer_amount;
 			$new_loan['deduct_lic_amount'] = $deduct_lic_amount;
@@ -169,6 +169,7 @@ class Extensions extends CI_Controller {
 				return;
 			}
 
+			$current_loan_update['has_extensions'] = 'YES';
 			$current_loan_update['loan_status'] = 'PAID';
 			$current_loan_update['loan_end_date'] = date( 'Y-m-d' );
             $current_loan_update['reject_comment'] = 'Extension Request is approved successfully!';

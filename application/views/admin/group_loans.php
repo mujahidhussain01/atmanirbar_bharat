@@ -139,11 +139,24 @@
 
 						<th data-toggle='tooltip' data-placement="top" title='Group Name'>Group Name</th>
 						
-						<th data-toggle='tooltip' data-placement="top" title='Rate Of Interest ( In % )' >Rate Of Interest <br> ( In % )</th>
+						<th data-toggle='tooltip' data-placement="top" title='Total Loan Amount' >Total Loan Amount</th>
+
+						<th data-toggle='tooltip' data-placement="top" title='Total Amount Disbursed' >Total Amount Disbursed</th>
+
+						<th data-toggle='tooltip' data-placement="top" title='Total Remaining Balance' >Total Remaining Balance</th>
+
+						<th data-toggle='tooltip' data-placement="top" title='Active Users' >Active Users</th>
+
+						<th data-toggle='tooltip' data-placement="top" title='Pending Users' >Pending Users</th>
 						
+						<th data-toggle='tooltip' data-placement="top" title='Rate Of Interest ( In % )' >Rate Of Interest <br> ( In % )</th>
+
 						<th data-toggle='tooltip' data-placement="top" title='Processing Fee ( In % )' >Processing Fee <br> ( In % )</th>
 						
 						<th data-toggle='tooltip' data-placement="top" title='Bouncing Changer ( In % )' >Bouncing Changes <br> ( In % )</th>
+
+						<th data-toggle='tooltip' data-placement="top" title='View Loans' >View Loans</th>
+
 
 						<th data-toggle='tooltip' data-placement="top" title='Date Created'>Date Created</th>
 
@@ -169,11 +182,23 @@
 
 						<td><?php echo $record['name']?></td>
 
+						<td>₹<?php echo $record['total_amount']?></td>
+
+						<td>₹<?php echo $record['amount_payed']?></td>
+
+						<td>₹<?php echo $record['remaining_balance']?></td>
+
+						<td><?= $this->Group_loans_model->get_group_loan_active_user_count( $record[ 'id' ] ) ?> Users</td>
+
+						<td><?= $this->Group_loans_model->get_group_loan_pending_user_count( $record[ 'id' ] ) ?> Users</td>
+
 						<td><?php echo $record['rate_of_interest']?>%</td>
 
 						<td><?php echo $record['process_fee_percent']?>%</td>
 
 						<td><?php echo $record['bouncing_charges_percent']?>%</td>
+
+						<td> <a href="<?= base_url( 'admin/loan/all_loan/GROUP/'.$record[ 'id' ] )?>" class="btn btn-primary">View Loans</a> </td>
 
 						<td><?php echo date( 'd-M-Y, H:i A', strtotime( $record['created_at'] ) );?></td>
 

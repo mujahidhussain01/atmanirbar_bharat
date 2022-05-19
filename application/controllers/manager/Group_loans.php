@@ -38,7 +38,6 @@ class Group_loans extends CI_Controller
         $this->load->model( 'User_model' );
     }
     
-
     public function index()
     {
         $this->data[ 'sub_page' ] = 'Group Loans List';
@@ -58,249 +57,330 @@ class Group_loans extends CI_Controller
 
     public function loan_info( $id )
     {
-        $data[ 'sub_page' ] = 'Loan Info';
-        $data[ 'group_loan' ] = $this->Loan_setting_model->get_single_group_loans_for_manager( intval( $id ) );
-
-        $data[ 'search' ] = trim( $this->input->get( 'search', true ) );
-
-        if( !empty( $data[ 'search' ] ) )
+        $this->data[ 'sub_page' ] = 'Loan Info';
+        
+        if( !$this->data[ 'group_loan' ] = $this->Group_loans_model->get_single_group_loan_with_amount_count( $id ) )
         {
-            $data[ 'loan_users' ] = $this->Loan_apply_model->get_users_of_group_loan( intval( $id ) , $data[ 'search' ] );
+            $this->session->set_flashdata( 'error', 'Invalid Loan ID' );
+            redirect( 'manager/group_loans' );
+            return;
+        }
+
+        $this->data[ 'search' ] = trim( $this->input->get( 'search', true ) );
+
+        if( !empty( $this->data[ 'search' ] ) )
+        {
+            $this->data[ 'all_loans' ] = $this->Group_loans_model->get_all_loans_of_group_loan( intval( $id ) , $this->data[ 'search' ] );
         }
         else
         {
-            $data[ 'loan_users' ] = $this->Loan_apply_model->get_users_of_group_loan( intval( $id ) );
+            $this->data[ 'all_loans' ] = $this->Group_loans_model->get_all_loans_of_group_loan( intval( $id ) );
         }
 
-        $this->load->view( 'manager/group_loan_info', $data );
+        $this->load->view( 'manager/group_loan_info', $this->data );
     }
-
-
-    public function loan_user_info( $la_id )
-    {
-        $data[ 'sub_page' ] = 'Loan Details';
-        $data[ 'loan' ] = $this->Loan_apply_model->getloandetail2( intval( $la_id ) );
-
-        $this->load->view( 'manager/group_loan_user_info', $data );
-    }
-
 
     public function loan_add_user( $id )
     {
-        $data[ 'mobile' ] = '';
-        $data[ 'sub_page' ] = 'Add User';
-        $data[ 'group_loan_info' ] = $this->Loan_setting_model->get_single_group_loans_for_manager( intval( $id ) );
+        if( !$this->data[ 'group_loan_info' ] = $this->Group_loans_model->get_single_group_loan( intval( $id ) ) )
+        {
+            $this->session->set_flashdata( 'error', 'Invalid Loan ID, Cannot Add User' );
+            redirect( 'manager/group_loans' );
+            return;
+        }
 
-        $this->load->view( 'manager/group_loan_add_user', $data );
+        $this->data[ 'sub_page' ] = 'Add User';
+
+        $this->load->view( 'manager/group_loan_add_user', $this->data );
     }
 
-
-    
     public function user_otp_send( $id )
     {
-        $data[ 'sub_page' ] = 'Add User';
-        $data[ 'group_loan_info' ] = $this->Loan_setting_model->get_single_group_loans_for_manager( intval( $id ) );
+        if( $_SERVER[ 'REQUEST_METHOD' ] !== 'POST' )
+        {
+            echo json_encode( [ 'success' => false, 'msg' => 'Invalid Action' ] );
+            return;
+        }
+       
+        if( !$group_loan_info = $this->Group_loans_model->get_single_group_loan( intval( $id ) ) )
+        {
+            echo json_encode( [ 'success' => false, 'msg' => 'Invalid Loan ID' ] );
+            return;
+        }
 
-        $mobile = $this->input->post( 'user_contact', true );
-
-        $data[ 'mobile' ] = $mobile;
+        $mobile = $this->input->post( 'mobile', true );
 
         if( !$this->User_model->get_single_user_by_mobile( $mobile ) )
         {
-            $this->session->set_flashdata( 'error', 'No User Registered With Given Mobile Number' );
-            $this->load->view( 'manager/group_loan_add_user', $data );
-            return; 
+            echo json_encode( [ 'success' => false, 'msg' => 'No User Registered With Given Mobile Number' ] );
+            return;
         }
 
         if( $this->Loan_apply_model->check_loan_taken_by_user_mobile( $mobile ) )
         {
-            $this->session->set_flashdata( 'error', 'A Loan Is Already Running For Given User' );
-            $this->load->view( 'manager/group_loan_add_user', $data );
+            echo json_encode( [ 'success' => false, 'msg' => 'A Loan Is Already Running For Given User' ] );
             return;
         }
 
         // Send OTP Here -------
 
-        $data[ 'otp_val' ] = '';
-        $data[ 'sub_page' ] = 'OTP Verify';
-
-        $this->load->view( 'manager/group_loan_otp_verify', $data );
+        echo json_encode( [ 'success' => true, 'msg' => 'OTP Sent To Given Mobile Number Successfully', 'data' => [ 'mobile' => $mobile ] ] );
+        return;
     }
 
+    public function user_otp_verify_form( $id, $mobile )
+    {
+        $this->data[ 'sub_page' ] = 'OTP Verify';
+
+        if( !$this->data[ 'group_loan_info' ] = $this->Group_loans_model->get_single_group_loan( intval( $id ) ) )
+        {
+            $this->session->set_flashdata( 'error', 'Invalid Loan ID, Cannot Verify OTP' );
+            redirect( 'manager/group_loans' );
+            return;
+        }
+
+        $this->data[ 'mobile' ] = $mobile;
+
+        if( !preg_match( '/^[6-9][0-9]{9}$/', $this->data[ 'mobile' ] ) )
+        {
+            $this->session->set_flashdata( 'error', 'Invalid Mobile Number' );
+            redirect( 'manager/group_loans/loan_add_user/'.intval( $id ) );
+        }
+
+        if( !$this->User_model->get_single_user_by_mobile( $mobile ) )
+        {
+            $this->session->set_flashdata( 'error', 'No User Registered With Given Mobile Number' );
+            redirect( 'manager/group_loans/loan_add_user/'.intval( $id ) );
+        }
+
+        if( $this->Loan_apply_model->check_loan_taken_by_user_mobile( $mobile ) )
+        {
+            $this->session->set_flashdata( 'error', 'A Loan Is Already Running For Given User' );
+            redirect( 'manager/group_loans/loan_add_user/'.intval( $id ) );
+        }
+
+        $this->load->view( 'manager/group_loan_otp_verify', $this->data );
+    }
 
     public function user_otp_verify( $id )
     {
-        $data[ 'sub_page' ] = 'OTP Verify';
-        $data[ 'group_loan_info' ] = $this->Loan_setting_model->get_single_group_loans_for_manager( intval( $id ) );
+        // First Verify OTP Then Apply For New Group Loan
 
-        $mobile = $this->input->post( 'user_contact', true );
-        $otp_val = $this->input->post( 'otp_val', true );
-        $deduct_lic_amount = $this->input->post( 'deduct_lic_amount', true );
-
-        $data[ 'mobile' ] = $mobile;
-        $data[ 'otp_val' ] = $otp_val;
-
-        if( !$userdata = $this->User_model->get_single_user_by_mobile( $mobile ) )
+        if( $_SERVER[ 'REQUEST_METHOD' ] !== 'POST' )
         {
-            $this->session->set_flashdata( 'error', 'No User Registered With Given Mobile Number' );
-            $this->load->view( 'manager/group_loan_otp_verify', $data );
-            return; 
+            echo json_encode( [ 'success' => false, 'msg' => 'Invalid Id' ] );
+            return;
         }
 
-        if( $prev_loan = $this->Loan_apply_model->getuserlastloandetail( $userdata['userid'] ) )
+        if( empty( intval( $id ) ) )
+        {
+            echo json_encode( [ 'success' => false, 'msg' => 'Invalid Id' ] );
+            return;
+        }
+
+        if( !$group_loan_info = $this->Group_loans_model->get_single_group_loan( intval( $id ) ) )
+        {
+            echo json_encode( [ 'success' => false, 'msg' => 'No Group Loan Found With Given ID' ] );
+            return;
+        }
+
+		$this->form_validation->set_rules( 'mobile', 'Mobile', 'trim|required|numeric|regex_match[/^[6-9][0-9]{9}$/]');
+		$this->form_validation->set_rules( 'otp_val', 'OTP Value', 'trim|required|numeric|greater_than[0]');
+		$this->form_validation->set_rules( 'loan_amount', 'Loan Amount', 'trim|required|numeric|greater_than[0]');
+		$this->form_validation->set_rules( 'loan_duration', 'Loan Duration', 'trim|required|numeric|greater_than[0]');
+		$this->form_validation->set_rules( 'payment_mode', 'Payment Mode', 'trim|required|alpha_dash');
+		$this->form_validation->set_rules( 'deduct_lic_amount', 'Deduct LIC Amount', 'trim|required|alpha_dash');
+
+
+		if( $this->form_validation->run() !== true )
 		{
-			if( ($prev_loan['loan_status'] == 'PENDING' OR  $prev_loan['loan_status'] == 'RUNNING' OR $prev_loan['loan_status'] == 'APPROVED' ) )
+			if( form_error( 'mobile' ) )
 			{
-                $this->session->set_flashdata( 'error', 'Payment of your previous loan is in under verification. please wait until the Admin verifies your payment ' );
-                $this->load->view( 'manager/group_loan_otp_verify', $data );
-                return;
+				$message = form_error( 'mobile' );
 			}
-			else if( $prev_loan['loan_status'] == 'PENDING' OR $prev_loan['loan_status'] == 'RUNNING' OR $prev_loan['loan_status'] == 'APPROVED' )
+			else if( form_error( 'otp_val' ) )
 			{
-                $this->session->set_flashdata( 'error', 'A loan is already is running in your profile please wait until the loan completes ' );
-                $this->load->view( 'manager/group_loan_otp_verify', $data );
-                return;
+				$message = form_error( 'otp_val' );
+			}
+			else if( form_error( 'loan_amount' ) )
+			{
+				$message = form_error( 'loan_amount' );
+			}
+			else if( form_error( 'loan_duration' ) )
+			{
+				$message = form_error( 'loan_duration' );
+			}
+			else if( form_error( 'payment_mode' ) )
+			{
+				$message = form_error( 'payment_mode' );
+			}
+			else if( form_error( 'deduct_lic_amount' ) )
+			{
+				$message = form_error( 'deduct_lic_amount' );
+			}
+			else
+			{
+				$message = 'Invalid Form Value';
 			}
 
+			echo json_encode( [ 'success' => false, 'msg' => strip_tags( $message ) ] );
+			return;
+		}
+
+        
+        // Validate OTP Here --
+
+        $mobile = $this->input->post( 'mobile', true );
+        $otp_val = $this->input->post( 'otp_val', true );
+
+
+        // Apply For New Group Loan --
+
+		$userdata = $this->User_model->get_single_user_by_mobile( $mobile );
+
+		if ( empty( $userdata ) )
+		{
+			$message = "Invalid User Token";
+			echo json_encode([ 'success' => false, 'msg' => $message ] );
+			return;
+		}
+
+
+		if( $prev_loan = $this->Loan_apply_model->getuserlastloandetail( $userdata[ 'userid' ] ) )
+		{
+			if( $prev_loan['loan_status'] == 'PENDING' )
+			{
+				$message = "Cannot Apply For New Loan, A Loan Request Is Pending In Your Profile, Please Wait For Admin To Respond.";
+
+				echo json_encode([ 'success' => false, 'msg' => $message] );
+				return;
+			}
+			else if( $prev_loan['loan_status'] == 'APPROVED' )
+			{
+				$message = "Cannot Apply For New Loan, A Loan Is Waiting For Amount Disbursement, Please Wait For Admin To Respond.";
+				
+				echo json_encode([ 'success' => false, 'msg' => $message] );
+				return;
+			}
+			else if( $prev_loan['loan_status'] == 'RUNNING' )
+			{
+				$message = "Cannot Apply For New Loan, A Loan Is Already Running With Your Account, Please Complete The Previous Loan First.";
+
+				echo json_encode([ 'success' => false, 'msg' => $message] );
+				return;
+			}
 		}
 		else if( $this->input->post( 'deduct_lic_amount', true ) !== 'yes' )
 		{
-            $this->session->set_flashdata( 'error', 'LIC Amount Deduction Is Compulsory For First Loan' );
-            $this->load->view( 'manager/group_loan_otp_verify', $data );
-            return;
+			$message = "LIC Amount Deduction Is Compulsory For First Loan";
+			echo json_encode([ 'success' => false, 'msg' => $message] );
+			return;
 		}
 
-        // verify OTP Here -----
+		// calculate loan data ----
+
+		$loan_amount = intval( $this->input->post( 'loan_amount', true ) );
+		$loan_duration = intval( $this->input->post( 'loan_duration', true ) ) ?? 1;
+		$payment_mode = $this->input->post( 'payment_mode', true );
+		$deduct_lic_amount = $this->input->post( 'deduct_lic_amount', true );
+
+		$rate_of_interest = $group_loan_info[ 'rate_of_interest' ];
+		$process_fee_percent = $group_loan_info[ 'process_fee_percent' ];
+		$bouncing_charges_percent = $group_loan_info[ 'bouncing_charges_percent' ];
+
+		$interest_amount_initial = ceil( ( $loan_amount / 100 ) * $rate_of_interest );
+
+		if( $loan_duration > 30 )
+		{
+			$multiply_by = ceil( $loan_duration / 30 );
+			$interest_amount = ceil( $interest_amount_initial * $multiply_by );
+		}
+		else
+		{
+			$interest_amount = $interest_amount_initial;
+		}
+		
+		$processing_fee = ceil( ( $loan_amount / 100 ) * $process_fee_percent );
+		$bouncing_charges = ceil( ( $loan_amount / 100 ) * $bouncing_charges_percent );
+
+		$one_percent = 0;
+		
+		if( $deduct_lic_amount == 'yes' )
+		{
+			$one_percent = ceil( $loan_amount / 100 );
+			$loan_closer_amount = $loan_amount + $interest_amount + $one_percent;
+		}
+		else
+		{
+			$loan_closer_amount = $loan_amount + $interest_amount;
+		}
+
+		// set initial emi count
+		$total_emi_count = 1;
+
+		// get value to be divided by loan duration to calculate emi amount
+		$divided_by = 1;
+
+		if( $payment_mode == 'weekly' )
+		{
+			$divided_by = 7;
+		}
+		else if( $payment_mode == 'every-15-days' )
+		{
+			$divided_by = 15;
+		}
+		else if( $payment_mode == 'monthly' )
+		{
+			$divided_by = 30;
+		}
+
+		$total_emi_count = floor( $loan_duration / $divided_by ) ;
+
+		$emi_amount = ceil( $loan_closer_amount / $total_emi_count );
+	
+
+		// calculate loan data End ----
+
+		$new_group_loan['user_id'] = $userdata[ 'userid' ];
+		$new_group_loan['loan_id'] = $group_loan_info[ 'id' ];
+		$new_group_loan['loan_type'] = 'GROUP';
+		$new_group_loan['amount'] = $loan_amount;
+		$new_group_loan['rate_of_interest'] = $rate_of_interest;
+		$new_group_loan['monthly_interest'] = $interest_amount_initial;
+		$new_group_loan['process_fee_percent'] = $process_fee_percent;
+		$new_group_loan['processing_fee'] = $processing_fee;
+		$new_group_loan['loan_duration'] = $loan_duration;
+		$new_group_loan['payment_mode'] = $payment_mode;
+		$new_group_loan['bouncing_charges_percent'] = $bouncing_charges_percent;
+		$new_group_loan['bouncing_charges'] = $bouncing_charges;
+		$new_group_loan['reject_comment'] = 'Your loan application is under process please wait for the approval';
+		$new_group_loan['emi_amount'] = $emi_amount;
+		$new_group_loan['payable_amt'] = $loan_amount - $processing_fee;
+		$new_group_loan['remaining_balance'] = $loan_closer_amount;
+		$new_group_loan['loan_closer_amount'] = $loan_closer_amount;
+		$new_group_loan['deduct_lic_amount'] = $deduct_lic_amount;
+		$new_group_loan['lic_amount'] = $one_percent;
+		$new_group_loan['manager_id'] = $this->session->manager_id;
 
 
-        // calculate loan data ----
+		$sql = $this->Loan_apply_model->insert( $new_group_loan );
 
-        $loan_amount = $data[ 'group_loan_info' ][ 'amount' ];
-        $loan_duration = $data[ 'group_loan_info' ][ 'loan_duration' ];
-        $payment_mode = $data[ 'group_loan_info' ][ 'payment_mode' ];
-        $deduct_lic_amount = $this->input->post( 'deduct_lic_amount', true );
+		if( $sql )
+		{
+			$userDefaultMsgdata['default_title'] = 'Loan Applied successfully';
+			$userDefaultMsgdata['default_message'] = 'your loan of Rs.'.$loan_amount.' is under process, we will keep you informed. Thanks';
 
-        $rate_of_interest = $data[ 'group_loan_info' ][ 'rate_of_interest' ];
-        $process_fee_percent = $data[ 'group_loan_info' ][ 'process_fee_percent' ];
-        $bouncing_charges_percent = $data[ 'group_loan_info' ][ 'bouncing_charges_percent' ];
-        $processing_fee = $data[ 'group_loan_info' ][ 'processing_fee' ];
-        $bouncing_charges = $data[ 'group_loan_info' ][ 'bouncing_charges' ];
+			$this->User_model->updateUserDataByUserId($userdata[ 'userid' ], $userDefaultMsgdata);
 
-        $interest_amount_initial = ceil( ( $loan_amount / 100 ) * $rate_of_interest );
+			$message = 'Loan Applied successfully'; 
+		}
+		else
+		{
+			$message = 'Unable to apply for the loan, Please Try Again Later';  
+		}
 
-        if( $loan_duration > 30 )
-        {
-            $multiply_by = ceil( $loan_duration / 30 );
-            $interest_amount = ceil( $interest_amount_initial * $multiply_by );
-        }
-        else
-        {
-            $interest_amount = $interest_amount_initial;
-        }
-
-        $one_percent = 0;
-
-        if( $deduct_lic_amount == 'YES' )
-        {
-            $one_percent = ceil( $loan_amount / 100 );
-            $loan_closer_amount = $loan_amount + $interest_amount + $one_percent;
-        }
-        else
-        {
-            $loan_closer_amount = $loan_amount + $interest_amount;
-        }
-
-        
-
-        // set initial emi count
-        $total_emi_count = 1;
-
-        // get value to be divided by loan duration to calculate emi amount
-        $divided_by = 1;
-
-        if( $payment_mode == 'weekly' )
-        {
-            $divided_by = 7;
-        }
-        else if( $payment_mode == 'every-15-days' )
-        {
-            $divided_by = 15;
-        }
-        else if( $payment_mode == 'monthly' )
-        {
-            $divided_by = 30;
-        }
-
-        $total_emi_count = floor( $loan_duration / $divided_by ) ;
-
-        $emi_amount = ceil( $loan_closer_amount / $total_emi_count );
-        
-
-
-        // calculate loan data End ----
-
-
-        $loan_apply['user_id'] = $userdata['userid'];
-        $loan_apply['loan_id'] = $data['group_loan_info'][ 'lsid' ];
-        $loan_apply['amount'] = $loan_amount;
-        $loan_apply['rate_of_interest'] = $rate_of_interest;
-        $loan_apply['process_fee_percent'] = $process_fee_percent;
-        $loan_apply['processing_fee'] = $processing_fee;
-        $loan_apply['loan_duration'] = $loan_duration;
-        $loan_apply['payment_mode'] = $payment_mode;
-        $loan_apply['bouncing_charges_percent'] = $bouncing_charges_percent;
-        $loan_apply['bouncing_charges'] = $bouncing_charges;
-        $loan_apply['reject_comment'] = 'Your loan application is under process please wait for the approval';
-        $loan_apply['emi_amount'] = $emi_amount;
-        $loan_apply['payable_amt'] = $loan_amount - $processing_fee;
-        $loan_apply['remaining_balance'] = $loan_closer_amount;
-        $loan_apply['loan_closer_amount'] = $loan_closer_amount;
-        $loan_apply['deduct_lic_amount'] = $deduct_lic_amount;
-        $loan_apply['lic_amount'] = $one_percent;
-
-        $loan_apply['manager_id'] = $this->session->manager_id;
-
-        // apply for Loan Here ---------
-        if( $this->Loan_apply_model->insert( $loan_apply ) )
-        {
-            $data[ 'sub_page' ] = 'Loan Applied Success';
-            $this->load->view( 'manager/group_loan_success', $data );
-        }
-        else
-        {
-            $this->session->set_flashdata( 'error', 'Failed To Apply For Loan, Please Try Again Later' );
-            $this->load->view( 'manager/group_loan_otp_verify', $data );
-            return;
-        }
-
-    }
-
-
-
-    public function claim_loan()
-    {
-        if( $_SERVER[ 'REQUEST_METHOD' ] !== 'POST' ) show_404();
-
-        $loan_id = intval( $this->input->post( 'loan_id' ) );
-
-        $loan = $this->Loan_apply_model->getloandetail2( $loan_id, [ 'loan_status' => 'APPROVED' ] );
-
-        if( !$loan || $loan[ 'manager_id' ] != null )
-        {
-            echo json_encode( [ 'success' => false, 'msg' => 'Loan Unavailable To Claim Or Invalid Loan ID' ] );
-            return;
-        }
-
-        if( $this->Loan_apply_model->update( $loan_id, [ 'manager_id' => $this->session->manager_id ] ) )
-        {
-            echo json_encode( [ 'success' => true, 'msg' => 'Loan Claimed Successfully' ] );
-        }
-        else
-        {
-            echo json_encode( [ 'success' => false, 'msg' => 'Loan Invalid Or Unavailable For Claim' ] );
-        }
-    }
-
+		echo json_encode( [ 'success' => true, 'msg' => $message, 'data' => [ 'new_loan_id' => $sql ] ] );  
+	}
 }
 
 /* End of file Claim.php */

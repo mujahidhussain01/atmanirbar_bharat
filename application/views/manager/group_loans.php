@@ -40,7 +40,7 @@
                                             <h5 class="panel-title text-capitalize">
                                             <strong><?=  ( $key+1 ).'. '.$loan['name']?> ( ₹<?=$loan[ 'total_amount' ] ?> )</strong>
                                             <div class="m-1">
-                                            <strong>Active Users Count : </strong><?= $this->Loan_apply_model->get_group_loan_user_count( $loan[ 'id' ] )?>
+                                            <strong>Active Users Count : </strong><?= $this->Group_loans_model->get_group_loan_active_user_count( $loan[ 'id' ] )?>
                                             </div>
                                             
                                             </h5>

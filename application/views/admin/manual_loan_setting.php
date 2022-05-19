@@ -40,6 +40,11 @@
 
 				<div class="form-row">
 
+				<div class="form-group m-b-15 col-12 my-3 d-flex justify-content-end">
+
+					<a href="<?= base_url( 'admin/loan/all_loan/NORMAL' )?>" class="btn btn-primary">View All Manual Loans</a>
+
+				</div>
 										
 					<div class="form-group m-b-15 col-12">
 

@@ -276,6 +276,8 @@
 
 							<th data-toggle='tooltip' data-placement="top" title='Bouncing Charges'>Bouncing Charges</th>
 
+							<th>View Loans</th>
+
 							<th>Status</th>
 
 							<th>Actions</th>
@@ -315,6 +317,8 @@
 								<td><?php echo $record['bouncing_charges_percent'] ?>%</td>
 
 								<td>Rs.<?php echo $record['bouncing_charges'] ?></td>
+
+								<td><a href="<?= base_url( 'admin/loan/all_loan/NORMAL/'.$record[ 'lsid' ] )?>" class="btn btn-primary">View Loans</a></td>
 
 
 								<td><button type="button" onclick="delete_loan_settings(<?php echo $record['lsid'] ?>,'<?= ($record['ls_status'] == 'Active' ? 'Inactive' : 'Active') ?>')" class="btn btn-sm btn-<?= ($record['ls_status'] == 'Active' ? 'success' : 'danger') ?>"><?php echo $record['ls_status'] ?></button></td>

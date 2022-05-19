@@ -50,6 +50,7 @@ class Manual_loan_setting extends CI_Controller
             $this->data['manual_loan_setting'] = $this->manual_loan_setting_model->get_manual_loan_setting();
         
             $this->load->view('admin/manual_loan_setting',$this->data);
+            return;
         }
         
         

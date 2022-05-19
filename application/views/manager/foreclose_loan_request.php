@@ -64,7 +64,7 @@
                                         <div class="col-6 p-2 border-bottom"> <strong>Click To ForeClose Loan </strong> </div>
                                         <div class="col-6 p-2 border-bottom">
                                             <button type="button" id="foreClose_loan_btn" class="btn btn-primary btn-sm">
-                                            Show Payments
+                                            ForeClose
                                             </button>        
                                         </div>
                                     </div>

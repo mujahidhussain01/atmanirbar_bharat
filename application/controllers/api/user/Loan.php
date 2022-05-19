@@ -567,13 +567,6 @@ class Loan extends REST_Controller
 
 		if( $sql )
 		{
-			$notifi['notify_content'] = 'New Loan Request from - '.$userdata->mobile.' of amount Rs'.$loan_amount;
-			$notifi['redirect_link'] = 'admin/loan';
-			$notifi['notifi_for'] = 'ADMIN';
-
-			$this->Notification_model->insert( $notifi );
-			$userDefaultMsgdata['default_title'] = 'Loan Applied successfully';
-
 			$userDefaultMsgdata['default_message'] = 'your loan of Rs.'.$loan_amount.' is under process, we will keep you informed. Thanks';
 			$this->User_model->updateUserDataByUserId($userdata->userid,$userDefaultMsgdata);
 			$message = 'Loan Applied successfully'; 
@@ -659,12 +652,6 @@ class Loan extends REST_Controller
 		if( $this->loan_extension_model->get_pending_extension_by_loan_id( $requested_loan_id ) )
 		{
 			$this->response(['status' => 201, 'error' => true, 'message' => 'Previous Extension Request Is Pending For Approval, Cannot Request For New Extension']);
-			return;
-		}
-
-		if( !$this->Loan_apply_model->update( $requested_loan_id, [ 'has_extensions' => 'YES' ] ) )
-		{
-			$this->response(['status' => 201, 'error' => true, 'message' => 'Failed To Update Current Loan, Unknown Error']);
 			return;
 		}
 

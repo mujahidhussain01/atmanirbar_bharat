@@ -62,7 +62,20 @@ class Loan_apply_model extends CI_Model
 	public function getloandetail3( $where )
 	{
 		$this->db->select("
-		u.*,
+		u.first_name,
+		u.last_name,
+		u.mobile,
+		u.email,
+		u.city,
+		u.bda_status,
+		u.adhar_card_front,
+		u.adhar_card_back,
+		u.pan_card_image,
+		u.passbook_image,
+		u.bda_status,
+		u.docv_status,
+		u.pan_card_approved_status,
+		u.passbook_approved_status,
 		la.*,
 		ma.name as manager_name");
 
@@ -72,6 +85,7 @@ class Loan_apply_model extends CI_Model
 		$this->db->join('user u','u.userid=la.user_id' );
 
 		$this->db->where( $where );
+		$this->db->order_by( 'la.loan_status' );
 		$this->db->order_by( 'la.la_doc', 'DESC' );
 
 		$query = $this->db->get();
@@ -132,41 +146,6 @@ class Loan_apply_model extends CI_Model
 		$this->db->where_in( 'loan_status', [ 'PENDING', 'APPROVED', 'RUNNING' ] );
 		return $this->db->count_all_results();
 	}
-
-	public function get_users_of_group_loan( $id ,$search = false )
-	{
-		$this->db->select('*');
-		$this->db->from('loan_apply');
-		$this->db->where( 'loan_apply.loan_id' , $id );
-		$this->db->where_in( 'loan_status' , [ 'PENDING', 'APPROVED', 'RUNNING' ] );
-		if( $search ) $this->db->where( " ( user.first_name like '%$search%' OR user.last_name like  '%$search%' ) " );
-		$this->db->join( 'user', 'user.userid = loan_apply.user_id', 'left' );
-		$query = $this->db->get();
-		return $query->result_array();
-	}
-
-	public function get_all_group_loans_count()
-	{
-		$this->db->select('*');
-		$this->db->from('loan_setting');
-		$this->db->where( 'loan_type' , 'GROUP' );
-
-		return $this->db->count_all_results();
-	}
-
-	public function get_group_loan_user_count( $lsid )
-	{
-		$this->db->select('*');
-		$this->db->from('loan_apply');
-		$this->db->where( 'loan_id' , $lsid );
-		$this->db->where_in( 'loan_status' , [ 'PENDING', 'APPROVED', 'RUNNING' ] );
-		$this->db->group_by( 'user_id' );
-		
-		return $this->db->count_all_results();
-	}
-
-
-
 
 	//  -------------------------
 
@@ -309,7 +288,8 @@ class Loan_apply_model extends CI_Model
 		$query = $this->db->get();
 		return $query->result_array();
 	}
-	public function getLoanByStatusByDateRange($status,$minvalue,$maxvalue){
+	public function getLoanByStatusByDateRange( $status, $minvalue, $maxvalue, $type = false, $loan_id = false )
+	{
 		$this->db->select("
 		u.*,
 		la.*,
@@ -317,9 +297,22 @@ class Loan_apply_model extends CI_Model
 		$this->db->from('loan_apply la');
 		$this->db->join('managers ma','ma.id=la.manager_id', 'left');
 		$this->db->join('user u','u.userid=la.user_id');
-		if($status != NULL){
-		$this->db->where('la.loan_status',$status);
+
+		if($status != NULL)
+		{
+			$this->db->where('la.loan_status',$status);
 		}
+
+		if( $type )
+		{
+			$this->db->where( 'la.loan_type', $type );
+		}
+
+		if( $loan_id )
+		{
+			$this->db->where( 'la.loan_id', intval( $loan_id ) );
+		}
+
 		$this->db->where("la_doc BETWEEN '$minvalue' AND '$maxvalue'");
 		$this->db->order_by( 'la.la_doc', 'DESC' );
 

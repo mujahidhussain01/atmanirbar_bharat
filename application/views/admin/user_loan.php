@@ -194,7 +194,12 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td {
 
         var date_range=$('#date_range_sel').html();
 
-        var data = {date_range:date_range,page:'<?=$sub_page?>'};
+        var data = {
+            date_range: date_range,
+            page:'<?=$sub_page?>',
+            type:'<?=$type?>',
+            loan_id:'<?=$loan_id?>',
+        };
 
         $.ajax({
 

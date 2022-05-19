@@ -115,7 +115,7 @@
                                                     <td><?= $loan['deduct_lic_amount'] ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Loan Closer Amount</th>
+                                                    <th>Final Loan Amount</th>
                                                     <td>₹<?= $loan['loan_closer_amount'] ?></td>
                                                 </tr>
                                                 <tr>

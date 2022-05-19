@@ -423,13 +423,7 @@ class Details extends REST_Controller
     				if ($this->User_model->updateUserDataByToken($token,$data)) 
 					{
     					$userdata = $this->User_model->GetUserByToken($token);
-    					if($userdata->bda_status == 'PENDING' && $userdata->pa_status == 'PENDING' && $userdata->aadhar_upload_status == 'COMPLETE' && $userdata->docv_status == 'PENDING' && $userdata->sa_status == 'PENDING' )
-						{
-                            $notifi['notify_content'] = $userdata->mobile.' is waiting for verification please verify this user';
-                            $notifi['redirect_link'] = 'admin/user/completed_selfie';
-                            $notifi['notifi_for'] = 'ADMIN';
-                            $this->Notification_model->insert($notifi);
-    					}
+
     					$error = false;
     					$message = "Bank Detail image is successfully saved";
     					$this->response(['status' => 200, 'error' => false, 'message' => $message, "img_url" => base_url('uploads/check_image/') . $userdata->check_image]);

@@ -76,32 +76,6 @@ class Loans extends CI_Controller
     }
 
 
-
-    public function claim_loan()
-    {
-        if( $_SERVER[ 'REQUEST_METHOD' ] !== 'POST' ) show_404();
-
-        $loan_id = intval( $this->input->post( 'loan_id' ) );
-
-        $loan = $this->Loan_apply_model->getloandetail2( $loan_id, [ 'loan_status IN ( "APPROVED", "PENDING" )' ] );
-
-        if( !$loan || $loan[ 'manager_id' ] != null )
-        {
-            echo json_encode( [ 'success' => false, 'msg' => 'Loan Unavailable To Claim Or Invalid Loan ID' ] );
-            return;
-        }
-
-        if( $this->Loan_apply_model->update( $loan_id, [ 'manager_id' => $this->session->manager_id ] ) )
-        {
-            echo json_encode( [ 'success' => true, 'msg' => 'Loan Claimed Successfully' ] );
-        }
-        else
-        {
-            echo json_encode( [ 'success' => false, 'msg' => 'Loan Invalid Or Unavailable For Claim' ] );
-        }
-    }
-
-
     public function loan_payments( $loan_id )
     {
         $data[ 'page' ] = 'Loans';
@@ -230,17 +204,44 @@ class Loans extends CI_Controller
         {
             $this->data[ 'message' ] = 'Invalid Loan ID';
 	        $this->load->view( 'manager/show_404', $this->data );
+            return;
         } 
 		
 		if( !$this->data[ 'loan_details' ] = $this->Loan_apply_model->getloandetail2( intval( $loan_id ) ) )
 		{
             $this->data[ 'message' ] = 'No Loan Found With Given Loan ID';
 	        $this->load->view( 'manager/show_404', $this->data );
+            return;
         }
 
 		$this->load->model( 'loan_extension_model' );
 
 	    $this->data['loan_extension'] = $this->loan_extension_model->get_single_extension_by_loan_id( intval( $loan_id ) );
+
+        $this->data[ 'loan_name' ] = '';
+
+		if( $this->data[ 'loan_details' ][ 'loan_type' ] == 'NORMAL' )
+		{
+			$this->load->model( 'Loan_setting_model' );
+
+			$get_loan_info = $this->Loan_setting_model->get_loan_name( $this->data[ 'loan_details' ][ 'loan_id' ] );
+
+			if( $get_loan_info )
+			{
+				$this->data[ 'loan_name' ] = $get_loan_info[ 'loan_name' ];
+			}
+		}
+		else if( $this->data[ 'loan_details' ][ 'loan_type' ] == 'GROUP' )
+		{
+			$this->load->model( 'Group_loans_model' );
+
+			$get_loan_info = $this->Group_loans_model->get_single_group_loan( $this->data[ 'loan_details' ][ 'loan_id' ] );
+
+			if( $get_loan_info )
+			{
+				$this->data[ 'loan_name' ] = $get_loan_info[ 'name' ];
+			}
+		}
 
 	    $this->load->view('manager/loan_details',$this->data);
 	}
@@ -256,18 +257,21 @@ class Loans extends CI_Controller
         {
             $this->data[ 'message' ] = 'Invalid Loan ID';
 	        $this->load->view( 'manager/show_404', $this->data );
+            return;
         } 
 
         if( !$this->data[ 'loan_details' ] = $this->Loan_apply_model->getloandetail2( intval( $loan_id ) ) )
         {
             $this->data[ 'message' ] = 'Invalid Loan ID';
 	        $this->load->view( 'manager/show_404', $this->data );
+            return;
         } 
 
         if( $this->data[ 'loan_details' ][ 'loan_status' ] != 'RUNNING' )
         {
             $this->data[ 'message' ] = 'Loan Is Not In Running Condition';
 	        $this->load->view( 'manager/show_404', $this->data );
+            return;
         } 
 
         $current_month = date_create( date( 'Y-m-d' ) );

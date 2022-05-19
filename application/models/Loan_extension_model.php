@@ -123,6 +123,7 @@ le.*,
 		$this->db->select('*');
 		$this->db->from('loan_extension');
 		$this->db->where('la_id',$loan_id);
+		$this->db->order_by( 'le_doc', 'DESC' );
 		$this->db->limit( 1 );
 
 		$query = $this->db->get();

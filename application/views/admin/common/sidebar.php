@@ -166,8 +166,7 @@
 			</li>
 
 
-
-			<!-- temp loan -->
+		<!-- temp loan -->
 			<li class="has-sub <?= (@$page == 'extensions' ? 'active' : '') ?>">
 
 				<a href="javascript:;">
@@ -221,35 +220,15 @@
 
 
 
+			<li class="<?= (@$page == 'Group Loans' ? 'active' : '') ?> my-3">
 
+				<a href="<?php echo base_url() ?>admin/group_loans">
 
+					<i class="fas fa-users"></i>
 
-			<li class="has-sub <?= (@$page == 'app_installs' ? 'active' : '') ?>">
-
-				<a href="javascript:;">
-
-					<b class="caret"></b>
-
-					<i class="fab fa-app-store"></i>
-
-					<span>Users</span>
+					<span>Group Loans</span>
 
 				</a>
-
-				<ul class="sub-menu" style="display: block;">
-
-					<li <?= (@$sub_page == 'pending_users' ? 'class="active"' : '') ?>><a class='text-warning' href="<?= site_url('admin/user/pending') ?>">Pending <span class="badge badge-warning pull-right"><?= $pendingusers; ?></span></a></li>
-
-					<li <?= (@$sub_page == 'document_pending' ? 'class="active"' : '') ?>><a class='text-info' href="<?= site_url('admin/user/document_pending') ?>">Document Pending <span class="badge badge-warning pull-right"><?= $documentpendingusers; ?></span></a></li>
-
-
-					<li <?= (@$sub_page == 'approved_users' ? 'class="active"' : '') ?>><a class='text-success' href="<?= site_url('admin/user/approved') ?>">Approved <span class="badge badge-success pull-right"><?= $approvedusers; ?></span></a></li>
-
-					<li <?= (@$sub_page == 'rejected_users' ? 'class="active"' : '') ?>><a class='text-danger' href="<?= site_url('admin/user/rejected') ?>">Rejected <span class="badge badge-danger pull-right"><?= $rejectedusers; ?></span></a></li>
-
-					<li <?= (@$sub_page == 'all_users' ? 'class="active"' : '') ?>><a class='text-info' href="<?= site_url('admin/user/') ?>">All <span class="badge badge-info pull-right"><?= $allusers; ?></span></a></li>
-
-				</ul>
 
 			</li>
 
@@ -292,17 +271,38 @@
 
 			</li>
 
-			<li class="<?= (@$page == 'Group Loans' ? 'active' : '') ?> my-3">
+			<hr class="mt-4">
 
-				<a href="<?php echo base_url() ?>admin/group_loans">
+			<li class="has-sub <?= (@$page == 'app_installs' ? 'active' : '') ?>">
 
-					<i class="fas fa-users"></i>
+				<a href="javascript:;">
 
-					<span>Group Loans</span>
+					<b class="caret"></b>
+
+					<i class="fab fa-app-store"></i>
+
+					<span>Users</span>
 
 				</a>
 
+				<ul class="sub-menu" style="display: block;">
+
+					<li <?= (@$sub_page == 'pending_users' ? 'class="active"' : '') ?>><a class='text-warning' href="<?= site_url('admin/user/pending') ?>">Pending <span class="badge badge-warning pull-right"><?= $pendingusers; ?></span></a></li>
+
+					<li <?= (@$sub_page == 'document_pending' ? 'class="active"' : '') ?>><a class='text-info' href="<?= site_url('admin/user/document_pending') ?>">Document Pending <span class="badge badge-warning pull-right"><?= $documentpendingusers; ?></span></a></li>
+
+
+					<li <?= (@$sub_page == 'approved_users' ? 'class="active"' : '') ?>><a class='text-success' href="<?= site_url('admin/user/approved') ?>">Approved <span class="badge badge-success pull-right"><?= $approvedusers; ?></span></a></li>
+
+					<li <?= (@$sub_page == 'rejected_users' ? 'class="active"' : '') ?>><a class='text-danger' href="<?= site_url('admin/user/rejected') ?>">Rejected <span class="badge badge-danger pull-right"><?= $rejectedusers; ?></span></a></li>
+
+					<li <?= (@$sub_page == 'all_users' ? 'class="active"' : '') ?>><a class='text-info' href="<?= site_url('admin/user/') ?>">All <span class="badge badge-info pull-right"><?= $allusers; ?></span></a></li>
+
+				</ul>
+
 			</li>
+
+	
 
 <hr class="mt-4">
 

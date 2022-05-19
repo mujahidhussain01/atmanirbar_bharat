@@ -162,7 +162,7 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td {
                                 </div>
 
                                 <div class="col-md-6 row">
-                                    <div class="col-md-6 p-25 border-bottom"> <strong> Claimed By  </strong> </div>
+                                    <div class="col-md-6 p-25 border-bottom"> <strong> Requested By Manager </strong> </div>
                                     <div class="col-md-6 p-25 border-bottom"><?= $loan_details[ 'manager_name' ] ? $loan_details[ 'manager_name' ].' ( Manager ) ' : 'NONE' ?></div>
                                 </div>
 

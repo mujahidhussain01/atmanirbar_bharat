@@ -139,7 +139,7 @@
                                                     <td>₹<?= ( $loan['processing_fee'] ?  $loan['processing_fee'] : 'NA') ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Loan Closer Amount</th>
+                                                    <th>Final Loan Amount</th>
                                                     <td>₹<?= $loan['loan_closer_amount'] ?></td>
                                                 </tr>
                                                 <tr>
@@ -189,36 +189,17 @@
                                                     <td><?= $loan['reject_comment'] ?></td>
                                                 </tr>
 
-                                                <!-- <tr>
-                                                    <th>Claim Loan</th>
-
-                                                    <td>
-
-                                                    <?php if ( $loan['manager_id'] == null && ( $loan['loan_status'] == 'APPROVED' || $loan['loan_status'] == 'PENDING' )) : ?> 
-
-                                                        <button type="button" class="btn btn-primary btn-sm" id="claimBtn" data-id="<?php echo $loan['la_id'] ?>" >Claim This Loan</button>
-
-                                                    <?php else:?>
-
-                                                        <button type="button" class="btn btn-primary btn-sm" disabled>Claimed</button>
-
-                                                    <?php endif;?>
-                                                    </td>
-                                                </tr>
-
+                                                <?php if ( !empty( $loan['manager_id'] ) ) : ?>
                                                 <tr>
-                                                    <th>Loan Claimed By</th>
+                                                    <th>Requested By Manager</th>
                                                     <td>
-                                                    <?php if ($loan['manager_id'] != null ) : ?>
 
                                                     <?php 
                                                         echo $loan['manager_name'] ? $loan['manager_name'] : 'NONE' ?>
 
-                                                    <?php else: ?>
-                                                        NONE
-                                                    <?php endif; ?>
                                                     </td>
-                                                </tr> -->
+                                                </tr> 
+                                                <?php endif; ?>
 
                                                 <?php if( $loan[ 'loan_status' ] == 'RUNNING' || $loan[ 'loan_status' ] == 'PAID' ):?>
                                                 <tr>
@@ -267,78 +248,3 @@
 </div>
 
 <?php include "common/footer.php" ?>
-
-<link rel="stylesheet" href="<?= base_url( 'assets/css/jquery-confirm.css' ) ?>">
-<script src="<?= base_url( 'assets/js/jquery-confirm.min.js' )?>"></script>
-<script>
-    $(document).ready(function()
-    {
-        var confirmed = false;
-        var claimBtn = $('#claimBtn');
-
-        $(claimBtn).on('click', function() 
-        {
-            if( confirmed )
-            {
-                return;
-            }
-                var data = {
-                loan_id: $(this).data('id')
-            };
-
-            $.confirm(
-            {
-                title: 'Claim Loan',
-                content: 'Confirm Claim This Loan ?',
-                buttons:
-                {
-                    confirm: function ()
-                    {
-                        $.confirm(
-                        {
-                            content: function ()
-                            {
-                                var self = this;
-
-                                return $.ajax(
-                                {
-                                    url: '<?php echo base_url() ?>manager/loans/claim_loan',
-                                    type: 'POST',
-                                    data: data,
-                                    headers:
-                                    {
-                                        accepts: 'application/json; charset=utf-8'
-                                    }
-                                })
-                                .done( function ( response )
-                                {
-                                    response = JSON.parse( response );
-
-                                    self.setTitle( response.success ? 'Success' : 'Error' );
-                                    self.setType( response.success ? 'green' : 'red' );
-                                    if( response.success )
-                                    {
-                                        confirmed = true;
-                                        $( claimBtn ).text( 'Claimed' );
-                                        $( claimBtn ).prop( 'disabled', true );
-                                        self.setContent( 'Loan Claimed Successfully' );
-                                    }
-                                    else
-                                    {
-                                        self.setContent('Unknown Error, Please Try Again Later');
-                                    }
-                                })
-                                .fail( function()
-                                {
-                                    self.setContent('Unknown Error, Please Try Again Later');
-                                });
-                            }
-                        });
-                    },
-                    cancel: function () {
-                    },
-                }
-            });
-        });
-    });
-    </script>

@@ -19,84 +19,111 @@ class Loan extends CI_Controller {
 
 	}
 
-	public function index(){
+	public function index( $type = false, $loan_id = false )
+	{
 	    $this->data['page'] = 'loans';
 	    $this->data['sub_page'] = 'new_loan';
 	    $this->data['page_title'] = 'New Loan Request';
-	    // $this->data['loans']= $this->Loan_apply_model->get_loan_by_status('PENDING');
-	    $this->load->view('admin/user_loan',$this->data);
+		$this->data[ 'type' ] = $type;
+		$this->data[ 'loan_id' ] = $loan_id;
+
+		$this->load->view('admin/user_loan',$this->data);
 	}
-	public function approved_loan(){
+	
+	public function approved_loan( $type = false, $loan_id = false )
+	{
 	    $this->data['page'] = 'loans';
 	    $this->data['sub_page'] = 'approved_loan';
 	    $this->data['page_title'] = 'Approved Loans';
-	    // $this->data['loans']= $this->Loan_apply_model->get_loan_by_status('APPROVED');	
-	    $this->load->view('admin/user_loan',$this->data);
+		$this->data[ 'type' ] = $type;
+		$this->data[ 'loan_id' ] = $loan_id;
+
+		$this->load->view('admin/user_loan',$this->data);
 	}
-	public function running_loan(){
+	
+	public function running_loan( $type = false, $loan_id = false )
+	{
 	    $this->data['page'] = 'loans';
 	    $this->data['sub_page'] = 'running_loan';
 	    $this->data['page_title'] = 'All Running Loans';
-	    // $this->data['loans']= $this->Loan_apply_model->get_loan_by_status('RUNNING');
-	    $this->load->view('admin/user_loan',$this->data);
+		$this->data[ 'type' ] = $type;
+		$this->data[ 'loan_id' ] = $loan_id;
+
+		$this->load->view('admin/user_loan',$this->data);
 	}
-	public function rejected_loan(){
+	
+	public function rejected_loan( $type = false, $loan_id = false )
+	{
 	    $this->data['page'] = 'loans';
 	    $this->data['sub_page'] = 'rejected_loan';
 	    $this->data['page_title'] = 'All Rejected Loans';
-	    // $this->data['loans']= $this->Loan_apply_model->get_loan_by_status('REJECTED');	
-	    $this->load->view('admin/user_loan',$this->data);
+		$this->data[ 'type' ] = $type;
+		$this->data[ 'loan_id' ] = $loan_id;
+
+		$this->load->view('admin/user_loan',$this->data);
 	}
-	public function paid_loan(){
+	
+	public function paid_loan( $type = false, $loan_id = false )
+	{
 	    $this->data['page'] = 'loans';
 	    $this->data['sub_page'] = 'paid_loan';
 	    $this->data['page_title'] = 'All Paid Loans';
-	    // $this->data['loans']= $this->Loan_apply_model->get_loan_by_status('PAID');	
-	    $this->load->view('admin/user_loan',$this->data);
+		$this->data[ 'type' ] = $type;
+		$this->data[ 'loan_id' ] = $loan_id;
+
+		$this->load->view('admin/user_loan',$this->data);
 	}
 
-	public function all_loan(){
+	public function all_loan( $type = false, $loan_id = false )
+	{
 	    $this->data['page'] = 'loans';
 	    $this->data['sub_page'] = 'all_loan';
 	    $this->data['page_title'] = 'All Loans';
-	    // $this->data['loans']= $this->Loan_apply_model->get_loan_by_status(NULL);	
-	    $this->load->view('admin/user_loan',$this->data);
+		$this->data[ 'type' ] = $type;
+		$this->data[ 'loan_id' ] = $loan_id;
+
+		$this->load->view('admin/user_loan',$this->data);
 	}
 
 	public function getLoanData()
     {
-	    $daterange = explode('-',$this->input->post( 'date_range' ));
+	    $daterange = explode('-',$this->input->post( 'date_range', true ));
+
+		$type = $this->input->post( 'type', true );
+		$loan_id = $this->input->post( 'loan_id', true );
+
 	    $minvalue = date('Y-m-d',strtotime($daterange[0])).' 00:00:00';
         $maxvalue = date('Y-m-d',strtotime($daterange[1])).' 23:59:59';
 
+
         if($_POST['page'] == 'new_loan')
 		{
-            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange('PENDING',$minvalue,$maxvalue);
+            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange('PENDING',$minvalue,$maxvalue, $type, $loan_id);
         }
 
         if($_POST['page'] == 'approved_loan')
 		{
-            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange('APPROVED',$minvalue,$maxvalue);
+            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange('APPROVED',$minvalue,$maxvalue, $type, $loan_id);
         }
 
 		if($_POST['page'] == 'running_loan')
 		{
-            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange( 'RUNNING', $minvalue, $maxvalue );
+            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange( 'RUNNING', $minvalue, $maxvalue, $type, $loan_id );
         }
 
         if($_POST['page'] == 'rejected_loan')
 		{
-            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange('REJECTED',$minvalue,$maxvalue);
+            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange('REJECTED',$minvalue,$maxvalue, $type, $loan_id);
         }
 
         if($_POST['page'] == 'paid_loan')
 		{
-            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange('PAID',$minvalue,$maxvalue);
+            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange('PAID',$minvalue,$maxvalue, $type, $loan_id);
         }
 
         if($_POST['page'] == 'all_loan')
 		{
-            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange(NULL,$minvalue,$maxvalue);
+            $loans = $this->Loan_apply_model->getLoanByStatusByDateRange(NULL,$minvalue,$maxvalue, $type, $loan_id);
         }
 	    ?>
 		<div class="table-responsive">
@@ -502,21 +529,23 @@ class Loan extends CI_Controller {
 		{
 			$this->load->model( 'Loan_setting_model' );
 
-			$get_loan_name = $this->Loan_setting_model->get_loan_name( $this->data[ 'loan_details' ][ 'loan_id' ] );
+			$get_loan_info = $this->Loan_setting_model->get_loan_name( $this->data[ 'loan_details' ][ 'loan_id' ] );
 
-			if( $get_loan_name )
+			if( $get_loan_info )
 			{
-				$this->data[ 'loan_name' ] = $get_loan_name[ 'loan_name' ];
+				$this->data[ 'loan_name' ] = $get_loan_info[ 'loan_name' ];
 			}
 		}
 		else if( $this->data[ 'loan_details' ][ 'loan_type' ] == 'GROUP' )
 		{
-			 // $get_loan_name = $this->Loan_setting_model->get_loan_name( $loan_details[ 'loan_id' ] );
+			$this->load->model( 'Group_loans_model' );
 
-			 // if( $get_loan_name )
-			 // {
-			 //     $loan_name = $get_loan_name[ 'loan_name' ];
-			 // }
+			$get_loan_info = $this->Group_loans_model->get_single_group_loan( $this->data[ 'loan_details' ][ 'loan_id' ] );
+
+			if( $get_loan_info )
+			{
+				$this->data[ 'loan_name' ] = $get_loan_info[ 'name' ];
+			}
 		}
 
 	    $this->data['loan_extension'] = $this->loan_extension_model->get_single_extension_by_loan_id( intval( $loan_id ) );
