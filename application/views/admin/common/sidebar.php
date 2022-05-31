@@ -244,6 +244,18 @@
 
 			</li>
 
+			<li class="<?= (@$page == 'penalty' ? 'active' : '') ?>">
+
+				<a href="<?php echo base_url() ?>admin/penalty">
+
+					<i class="fa fa-cog fa-stack-1"></i>
+
+					<span>Generate Penalty</span>
+
+				</a>
+
+			</li>
+
 			<hr class="mt-4">
 
 

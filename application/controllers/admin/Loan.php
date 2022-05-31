@@ -360,6 +360,7 @@ class Loan extends CI_Controller {
 					'loan_apply_id' => $loan[ 'la_id' ],
 					'user_id' => $loan[ 'user_id' ],
 					'amount' => $loan[ 'emi_amount' ],
+					'initial_amount' => $loan[ 'emi_amount' ],
 					'payment_date' => $next_date
 
 				];
@@ -433,9 +434,10 @@ class Loan extends CI_Controller {
 				<thead>
 					<tr>
 						<th>S.no</th>
+						<th>Initial Amount</th>
+						<th>Bouncing Charges</th>
 						<th>Emi Amount</th>
 						<th>Payment Date</th>
-						<th>Bouncing Charges</th>
 						<th>Payment Status</th>
 						<th>Amount Received</th>
 						<th>Amount Received At</th>
@@ -447,9 +449,10 @@ class Loan extends CI_Controller {
 
 						<tr>
 							<td><?php echo ++$key ?></td>
+							<td>₹<?php echo $payment[ 'initial_amount' ]?></td>
+							<td><?php echo $payment[ 'bounce_charges' ] ? $payment[ 'bounce_charges' ] : "NA" ?></td>
 							<td>₹<?php echo $payment[ 'amount' ]?></td>
 							<td><?php echo $payment[ 'payment_date' ] ? date( 'd-M-Y', strtotime( $payment[ 'payment_date' ] ) ) : 'NA' ?></td>
-							<td><?php echo $payment[ 'bounce_charges' ] ? $payment[ 'bounce_charges' ] : "NA" ?></td>
 							<td>
 								<?php if( $payment[ 'status' ] == 'ACTIVE' ):?>
 

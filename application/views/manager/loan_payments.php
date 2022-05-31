@@ -122,6 +122,12 @@
                                     <?php if( $loan_payment[ 'status' ] == 'ACTIVE' ):?>
                                         <div class="row">
                                             <div class="col-6">
+                                                <strong>Initial Amount : </strong>
+                                                ₹<?= $loan_payment[ 'initial_amount' ]?>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-6">
                                                 <small><strong>Status : </strong>Done</small>
                                             </div>
                                             <div class="col-6">
@@ -143,11 +149,15 @@
                                                 <strong>Status : </strong>Pending
                                             </div>
 
+                                            <div class="col-6">
+                                                <strong>Initial Amount : </strong> ₹<?= $loan_payment['initial_amount'] ?>
+                                            </div>
+
                                             <?php if( $mark_payment ):?>
 
                                                 <?php $mark_payment = false;?>
 
-                                                <div class="col-6">
+                                                <div class="col-12 mt-3 d-flex justify-content-end">
                                                     <a href="<?= base_url( 'manager/loans/mark_payment_form/'.$loan_payment[ 'id' ] )?>">
                                                         <button class="btn btn-primary" >Mark Received</button>
                                                     </a>

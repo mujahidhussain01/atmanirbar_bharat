@@ -144,6 +144,15 @@ class Loans extends CI_Controller
 
         $amount_received = $this->input->post( 'amount', true );
 
+        $toReceiveAmount = intval( $payment[ 'amount' ] ) + intval( $payment[ 'bounce_charges' ] );
+
+        if( $amount_received > $toReceiveAmount )
+        {
+            $this->session->set_flashdata( 'error', 'Amount Received Cannot Be Greater Than Emi Amount, If User Is Giving More Amount Than Emi Amount, Please Receive Amount In Next Payment Or Use Foreclose Loan Feature' );
+            $this->load->view( 'manager/mark_payment_form', $data );
+            return;
+        }
+
         $update_payment[ 'amount_received' ] = intval( $amount_received );
         $update_payment[ 'amount_received_at' ] = date( 'Y-m-d H:i:s' );
         $update_payment[ 'status' ] = 'ACTIVE';
@@ -152,6 +161,20 @@ class Loans extends CI_Controller
 
         if( $this->Loan_payments_model->update_single_payment( $update_payment, $payment_id ) )
         {
+            if(  $amount_received < $toReceiveAmount )
+            {
+                // check next payment
+                // if has next payment, add remaining amount with next emi amount
+                // if no payment fount then ignore 
+
+                if( $nextPayment = $this->Loan_payments_model->get_next_payment_where_id( $payment[ 'id' ], $payment[ 'loan_apply_id' ] ) )
+                {
+                    $remainingAmount = $toReceiveAmount - $amount_received;
+                    $update_next_payment[ 'amount' ] = intval( $nextPayment[ 'amount' ] ) + $remainingAmount;
+
+                    $this->Loan_payments_model->update_single_payment( $update_next_payment, $nextPayment[ 'id' ] );
+                }
+            }
             // update loan apply
 
             $update_loan_apply[ 'remaining_balance' ] = intval( $loan_apply[ 'remaining_balance' ] ) - intval( $amount_received );

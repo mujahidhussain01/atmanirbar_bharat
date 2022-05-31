@@ -266,6 +266,33 @@ class Loan_payments_model extends CI_Model
 		return $query->row_array();
     }
 
+    public function get_next_payment_where_id( $payment_id, $loan_id )
+    {
+         $this->db->select( '*')
+		->from( $this->table )
+		->where( 'id !=', intval( $payment_id ) )
+		->where( 'loan_apply_id', intval( $loan_id ) )
+        ->where( 'status', 'INACTIVE' )
+        ->order_by( 'payment_date', 'ASC' )
+        ->limit( 1 );
+        
+		$query = $this->db->get();
+		return $query->row_array();
+    }
+
+
+    public function get_all_loans_pending_payments()
+    {
+        $this->db->select( '*')
+		->from( $this->table )
+        ->where( 'status', 'INACTIVE' )
+        ->where( 'payment_date <', date( 'Y-m-d H:i:s' ) )
+        ->order_by( 'payment_date', 'ASC' );
+        
+		$query = $this->db->get();
+		return $query->result_array();
+    }
+
     
     public function update_single_payment( $data, $id )
     {

@@ -423,7 +423,6 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td {
 
         if( !received_amount )
         {
-            alert( 'Invalid Amount Received Value' );
             return;
         }
 

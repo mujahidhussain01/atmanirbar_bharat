@@ -85,11 +85,12 @@
                                         <th>S.no</th>
                                         <th>Loan Details</th>
                                         <th>User Details</th>
+                                        <th>Initial Amount</th>
+                                        <th>Bouncing Charges</th>
                                         <th>Emi Amount</th>
                                         <th>Payment Date</th>
                                         <th>Payment Received Date</th>
                                         <th>Amount Received</th>
-                                        <th>Bouncing Charges</th>
                                         <th>Payment Status</th>
                                         <th>Amount Received</th>
                                         <th>Received By</th>
@@ -146,6 +147,9 @@
                                                     </ul>
 
                                                 </td>
+                                                <td>₹<?php echo $payment[ 'initial_amount' ] ?></td>
+                                                <td><?php echo $payment[ 'bounce_charges' ] ? $payment[ 'bounce_charges' ] : "NA" ?></td>
+
                                                 <td>₹<?php echo $payment[ 'amount' ] ?></td>
                                                 <td><?php echo date('d-M-Y', strtotime($payment[ 'payment_date' ])) ?></td>
 
@@ -156,7 +160,6 @@
                                                         <?php echo '₹' . $payment[ 'amount_received' ] ?>
                                                     </td>
 
-                                                <td><?php echo $payment[ 'bounce_charges' ] ? $payment[ 'bounce_charges' ] : "NA" ?></td>
                                                 <td>
                                                     <?php if ($payment[ 'status' ] == 'ACTIVE') : ?>
 
