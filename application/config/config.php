@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/mujahid/git/atmanirbar_bharat';
+$config['base_url'] = 'http://localhost/laravel/atmanirbar_bharat';
 // $config['base_url'] = 'https://assleit.com/atmanirbar_bharat';
 
 /*

@@ -239,9 +239,10 @@
                                     </div>
                                 </div>
 
-                                <?php if (!empty($loan_extension)) : ?>
+                                <div class="col-12">
 
-                                    <div class="col-12">
+                                    <?php if (!empty($loan_extension)) : ?>
+
                                         <div class="col-12 row m-0 p-0">
                                             <div class="col-6 p-2 border-bottom"> <strong>Extension Approval Status </strong> </div>
                                             <div class="col-6 p-2 border-bottom">
@@ -249,25 +250,24 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-12 row m-0 p-0">
-                                            <div class="col-6 p-2 border-bottom"> <strong>Extended Loan Details </strong> </div>
-                                            <div class="col-6 p-2 border-bottom">
+                                    <?php endif; ?>
 
-                                                <?php if ($loan_extension['extension_status'] == 'APPROVED') : ?>
+                                    <?php if( !empty( $loan_details['child_la_id'] ) ) : ?>
 
-                                                    <a href="<?= base_url('manager/loans/details/' . $loan_extension['new_la_id']) ?>">
-                                                        <button type="button" class="btn btn-primary btn-sm">
-                                                            View Details
-                                                        </button>
-                                                    </a>
-
-                                                <?php else : ?>
-                                                    Not Available
-                                                <?php endif; ?>
-                                            </div>
+                                    <div class="col-12 row m-0 p-0">
+                                        <div class="col-6 p-2 border-bottom"> <strong>Extended Or Child Loan Details </strong> </div>
+                                        <div class="col-6 p-2 border-bottom">
+                                                <a href="<?= base_url('manager/loans/details/' . $loan_details['child_la_id']) ?>">
+                                                    <button type="button" class="btn btn-primary btn-sm">
+                                                        View Details
+                                                    </button>
+                                                </a>
                                         </div>
                                     </div>
-                                <?php endif; ?>
+                                    
+                                    <?php endif; ?>
+
+                                </div>
                             </div>
                         </div>
                     </div>

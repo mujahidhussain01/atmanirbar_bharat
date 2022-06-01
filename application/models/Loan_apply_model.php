@@ -59,6 +59,17 @@ class Loan_apply_model extends CI_Model
 		return $query->row_array();
 	}
 
+	public function getSingleLoanById( $loan_id )
+	{
+		$this->db->select( '*' )
+		->from( 'loan_apply' )
+		->where( 'la_id', intval( $loan_id ) )
+		->limit( 1 );
+
+		$query = $this->db->get();
+		return $query->row_array();
+	}
+
 	public function getloandetail3( $where )
 	{
 		$this->db->select("

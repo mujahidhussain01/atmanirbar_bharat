@@ -285,10 +285,11 @@ class Loan_payments_model extends CI_Model
     {
         $this->db->select( '*')
 		->from( $this->table )
+        ->where( 'bounce_charges IS NULL' )
         ->where( 'status', 'INACTIVE' )
-        ->where( 'payment_date <', date( 'Y-m-d H:i:s' ) )
+        ->where( "str_to_date( payment_date, '%Y-%m-%d') < str_to_date( '".date( 'Y-m-d' )."' ,'%Y-%m-%d')" )
         ->order_by( 'payment_date', 'ASC' );
-        
+
 		$query = $this->db->get();
 		return $query->result_array();
     }

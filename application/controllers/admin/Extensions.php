@@ -152,7 +152,7 @@ class Extensions extends CI_Controller {
 			$new_loan['payment_mode'] = $payment_mode;
 			$new_loan['bouncing_charges_percent'] = $bouncing_charges_percent;
 			$new_loan['bouncing_charges'] = $bouncing_charges;
-			$new_loan['reject_comment'] = 'Your loan application is under process please wait for the approval';
+			$new_loan['reject_comment'] = 'Your Extension loan application is under process please wait for the approval';
 			$new_loan['emi_amount'] = $emi_amount;
 			$new_loan['payable_amt'] = intval( $loan_extension[ 'ext_amount' ] ) - $processing_fee;
 			$new_loan['remaining_balance'] = $loan_closer_amount;
@@ -169,6 +169,7 @@ class Extensions extends CI_Controller {
 				return;
 			}
 
+			$current_loan_update['child_la_id'] = $new_loan_id;
 			$current_loan_update['has_extensions'] = 'YES';
 			$current_loan_update['loan_status'] = 'PAID';
 			$current_loan_update['loan_end_date'] = date( 'Y-m-d' );

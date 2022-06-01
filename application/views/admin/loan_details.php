@@ -248,37 +248,38 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td {
                                 </div>
                             </div>
 
-                            <?php if( !empty( $loan_extension ) ):?>
-
                             <div class="row col-12">
-                                <div class="row col-md-6">
-                                    <div class="col-md-6 p-25 border-bottom"> <strong>Extension Approval Status  </strong> </div>
-                                    <div class="col-md-6 p-25 border-bottom">
-                                        <?= $loan_extension[ 'extension_status' ] ?>
+
+                                <?php if( !empty( $loan_extension ) ):?>
+
+                                    <div class="row col-md-6">
+                                        <div class="col-md-6 p-25 border-bottom"> <strong>Extension Approval Status  </strong> </div>
+                                        <div class="col-md-6 p-25 border-bottom">
+                                            <?= $loan_extension[ 'extension_status' ] ?>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="row col-md-6">
-                                    <div class="col-md-6 p-25 border-bottom"> <strong>Extended Loan Details  </strong> </div>
-                                    <div class="col-md-6 p-25 border-bottom">
+                                <?php endif;?>
 
-                                        <?php if( $loan_extension[ 'extension_status' ] == 'APPROVED' ):?>
 
-                                        <a href="<?= base_url( 'admin/loan/details/'.$loan_extension[ 'new_la_id' ] )?>">
-                                            <button type="button" class="btn btn-primary btn-sm my-2">
-                                                View Details
-                                            </button>
-                                        </a>
+                                <?php if( !empty( $loan_details['child_la_id'] ) ) : ?>
 
-                                        <?php else:?>
-                                            Not Available
-                                        <?php endif;?>
+                                    <div class="row col-md-6">
+                                        <div class="col-md-6 p-25 border-bottom"> <strong>Extended Or Child Loan Details  </strong> </div>
+                                        <div class="col-md-6 p-25 border-bottom">
 
+                                            <a href="<?= base_url( 'admin/loan/details/'.$loan_details['child_la_id'] )?>">
+                                                <button type="button" class="btn btn-primary btn-sm my-2">
+                                                    View Details
+                                                </button>
+                                            </a>
+
+                                            
+                                        </div>
                                     </div>
-                                </div>
+                                <?php endif;?>
+
                             </div>
-
-                            <?php endif;?>
 
 				    </div>
 
