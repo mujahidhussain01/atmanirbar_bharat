@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 11, 2022 at 01:44 PM
+-- Generation Time: Jun 04, 2022 at 09:46 AM
 -- Server version: 10.4.18-MariaDB
 -- PHP Version: 7.3.27
 
@@ -71,17 +71,25 @@ INSERT INTO `feedback` (`f_id`, `user_id`, `name`, `email`, `phone`, `title`, `m
 -- --------------------------------------------------------
 
 --
--- Table structure for table `groups`
+-- Table structure for table `group_loans`
 --
 
-CREATE TABLE `groups` (
+CREATE TABLE `group_loans` (
   `id` int(11) NOT NULL,
   `name` varchar(100) DEFAULT NULL,
-  `created_by` enum('ADMIN','MANAGER') DEFAULT NULL,
-  `manager_id` int(11) DEFAULT NULL,
+  `rate_of_interest` decimal(4,2) NOT NULL,
+  `process_fee_percent` decimal(4,2) NOT NULL,
+  `bouncing_charges_percent` decimal(4,2) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `group_loans`
+--
+
+INSERT INTO `group_loans` (`id`, `name`, `rate_of_interest`, `process_fee_percent`, `bouncing_charges_percent`, `created_at`, `updated_at`) VALUES
+(1, 'Test', '5.00', '2.00', '1.00', '2022-05-12 16:34:10', '2022-05-16 18:37:00');
 
 -- --------------------------------------------------------
 
@@ -117,10 +125,11 @@ CREATE TABLE `loan_apply` (
   `loan_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `manager_id` int(11) DEFAULT NULL,
-  `loan_status` enum('PENDING','APPROVED','REJECTED','PAID','RUNNING') NOT NULL DEFAULT 'PENDING',
-  `parent_id` int(11) NOT NULL,
+  `loan_type` enum('NORMAL','MANUAL','GROUP') DEFAULT NULL,
+  `loan_status` enum('PENDING','APPROVED','RUNNING','PAID','REJECTED') NOT NULL DEFAULT 'PENDING',
   `monthly_interest` int(11) NOT NULL,
   `extension_of` int(11) DEFAULT NULL,
+  `child_la_id` int(11) DEFAULT NULL,
   `emi_bounced_amount` int(11) NOT NULL,
   `has_extensions` enum('YES','NO') NOT NULL DEFAULT 'NO',
   `loan_start_date` date DEFAULT NULL,
@@ -133,6 +142,7 @@ CREATE TABLE `loan_apply` (
   `deduct_lic_amount` enum('YES','NO') DEFAULT 'NO',
   `lic_amount` int(11) NOT NULL,
   `amount` varchar(11) DEFAULT NULL,
+  `initial_amount` int(11) DEFAULT NULL,
   `rate_of_interest` varchar(11) DEFAULT NULL,
   `process_fee_percent` varchar(11) DEFAULT NULL,
   `processing_fee` varchar(11) DEFAULT NULL,
@@ -142,8 +152,7 @@ CREATE TABLE `loan_apply` (
   `bouncing_charges` varchar(11) DEFAULT NULL,
   `emi_amount` varchar(11) DEFAULT NULL,
   `la_doc` timestamp NULL DEFAULT current_timestamp(),
-  `la_dom` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
-  `la_status` enum('Active','Inactive') NOT NULL DEFAULT 'Active'
+  `la_dom` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -179,6 +188,7 @@ CREATE TABLE `loan_payments` (
   `amount_received_by` enum('ADMIN','MANAGER') DEFAULT NULL,
   `manager_id` int(11) DEFAULT NULL,
   `amount` int(11) DEFAULT NULL,
+  `initial_amount` int(11) DEFAULT NULL,
   `amount_received` int(11) DEFAULT NULL,
   `amount_received_at` datetime DEFAULT NULL,
   `payment_date` date DEFAULT NULL,
@@ -197,7 +207,6 @@ CREATE TABLE `loan_payments` (
 CREATE TABLE `loan_setting` (
   `lsid` int(11) NOT NULL,
   `loan_name` varchar(100) DEFAULT NULL,
-  `loan_type` enum('NORMAL','GROUP','','') NOT NULL DEFAULT 'NORMAL',
   `amount` varchar(11) DEFAULT NULL,
   `rate_of_interest` varchar(11) DEFAULT NULL,
   `process_fee_percent` varchar(11) DEFAULT NULL,
@@ -216,8 +225,9 @@ CREATE TABLE `loan_setting` (
 -- Dumping data for table `loan_setting`
 --
 
-INSERT INTO `loan_setting` (`lsid`, `loan_name`, `loan_type`, `amount`, `rate_of_interest`, `process_fee_percent`, `processing_fee`, `loan_duration`, `payment_mode`, `bouncing_charges_percent`, `bouncing_charges`, `emi_amount`, `ls_doc`, `ls_dom`, `ls_status`) VALUES
-(1, 'demo loan', 'NORMAL', '10000', '5', '1', '100', '120', 'monthly', '2', '200', '3000', '2022-04-30 11:35:09', NULL, 'Active');
+INSERT INTO `loan_setting` (`lsid`, `loan_name`, `amount`, `rate_of_interest`, `process_fee_percent`, `processing_fee`, `loan_duration`, `payment_mode`, `bouncing_charges_percent`, `bouncing_charges`, `emi_amount`, `ls_doc`, `ls_dom`, `ls_status`) VALUES
+(1, 'demo loan', '10000', '5', '1', '100', '120', 'monthly', '2', '200', '3000', '2022-04-30 11:35:09', '2022-06-02 09:47:40', 'Inactive'),
+(2, 'demo loan', '5000', '5', '1', '50', '60', 'every-15-days', '1', '50', '1375', '2022-05-11 12:49:42', NULL, 'Active');
 
 -- --------------------------------------------------------
 
@@ -400,6 +410,13 @@ CREATE TABLE `user` (
   `default_title` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`userid`, `first_name`, `last_name`, `email`, `password`, `token`, `mobile`, `profile_image`, `adhar_card_front`, `adhar_card_back`, `pan_card_image`, `passbook_image`, `pan_card_approved_status`, `pan_card_approved_status_comment`, `passbook_approved_status`, `passbook_approved_status_comment`, `address`, `web_user_status`, `deviceId`, `dob`, `deviceType`, `fcm_token`, `userCreationDate`, `pastModifiedDate`, `p_c_status`, `status`, `city`, `country`, `ecr1`, `aadhar_no`, `ecr2`, `ec1`, `ec2`, `socialStatus`, `admin_email_shoot`, `aadhar_upload_status`, `company_upload_status`, `company_approve_status`, `company_approve_status_comment`, `bank_upload_status`, `bda_status`, `bda_status_comment`, `ecv_status`, `ecv_status_comment`, `ba_status`, `ba_status_comment`, `pa_status`, `pa_status_comment`, `docv_status`, `docv_status_comment`, `sa_status`, `sa_status_comment`, `cpa_status`, `bank_name`, `acc_holder_name`, `ifcs_code`, `acc_no`, `check_image`, `company_name`, `job_type`, `position`, `monthly_salary`, `pay_slip_image`, `pdf_password`, `office_telephone`, `industry`, `years_of_working`, `income_by`, `occupation`, `company_address`, `default_message`, `default_title`) VALUES
+(1, 'testttt3', 'user', 'test@test.com', NULL, 'b7sba8v8kdnqt9ed0pp8fops4yif5zdrs7s', '9999999999', NULL, 'aadhar_card_front_image_846610_1652336747.jpg', 'aadhar_card_back_image_583696_1652336751.jpg', 'pan_card_image_787768_1652336833.jpg', 'passbook_image_965931_1652336837.jpg', 'APPROVED', '', 'APPROVED', '', NULL, 'INACTIVE', 0, NULL, 0, NULL, '2022-05-12 06:25:12', '2022-05-12 06:25:12', 'INCOMPLETE', 'ACTIVE', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'INACTIVE', 'INACTIVE', '', 'INCOMPLETE', 'NOT_AVAILABLE', NULL, 'INCOMPLETE', 'APPROVED', '', 'NOT_AVAILABLE', NULL, 'NOT_AVAILABLE', NULL, 'NOT_AVAILABLE', NULL, 'APPROVED', '', 'NOT_AVAILABLE', NULL, 'NOT_VERIFIED', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Your Loan Extended With Total Amount Rs.6550 Successfully, Please Wait For Amount Disbursement. we will keep you informed. Thanks', 'Loan Extension Request Approved And A New Loan With Extended Amount Assigned To Your Account');
+
 -- --------------------------------------------------------
 
 --
@@ -445,9 +462,9 @@ ALTER TABLE `feedback`
   ADD PRIMARY KEY (`f_id`);
 
 --
--- Indexes for table `groups`
+-- Indexes for table `group_loans`
 --
-ALTER TABLE `groups`
+ALTER TABLE `group_loans`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -461,19 +478,23 @@ ALTER TABLE `keys`
 -- Indexes for table `loan_apply`
 --
 ALTER TABLE `loan_apply`
-  ADD PRIMARY KEY (`la_id`);
+  ADD PRIMARY KEY (`la_id`),
+  ADD KEY `loan_type` (`loan_type`),
+  ADD KEY `loan_status` (`loan_status`);
 
 --
 -- Indexes for table `loan_extension`
 --
 ALTER TABLE `loan_extension`
-  ADD PRIMARY KEY (`le_id`);
+  ADD PRIMARY KEY (`le_id`),
+  ADD KEY `extension_status` (`extension_status`);
 
 --
 -- Indexes for table `loan_payments`
 --
 ALTER TABLE `loan_payments`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `status` (`status`);
 
 --
 -- Indexes for table `loan_setting`
@@ -547,10 +568,10 @@ ALTER TABLE `feedback`
   MODIFY `f_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `groups`
+-- AUTO_INCREMENT for table `group_loans`
 --
-ALTER TABLE `groups`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `group_loans`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `loan_apply`
@@ -574,7 +595,7 @@ ALTER TABLE `loan_payments`
 -- AUTO_INCREMENT for table `loan_setting`
 --
 ALTER TABLE `loan_setting`
-  MODIFY `lsid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `lsid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `logs`
@@ -610,7 +631,7 @@ ALTER TABLE `otp`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `userid` int(50) NOT NULL AUTO_INCREMENT;
+  MODIFY `userid` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user_app_contacts`
