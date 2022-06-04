@@ -45,7 +45,7 @@ class Penalty extends CI_Controller
 
         // generate payment penalty
 
-        $allPenaltyPayments = $this->Loan_payments_model->get_all_loans_pending_payments();
+        $allPenaltyPayments = $this->Loan_payments_model->get_all_loans_penalty_payments();
 
         foreach ( $allPenaltyPayments as $key => $penaltyPayment )
         {
@@ -78,13 +78,12 @@ class Penalty extends CI_Controller
 
         foreach ( $allPenaltyLoans as $key => $penaltyLoan )
         {
-
             $new_loan = [];
 
             $loan_amount = $penaltyLoan[ 'remaining_balance' ];
 			$loan_duration = $penaltyLoan[ 'loan_duration' ];
 			$payment_mode = $penaltyLoan[ 'payment_mode' ];
-			$deduct_lic_amount =$penaltyLoan[ 'deduct_lic_amount' ];
+			$deduct_lic_amount = $penaltyLoan[ 'deduct_lic_amount' ];
 
 			$rate_of_interest = $penaltyLoan[ 'rate_of_interest' ];
 			$process_fee_percent = $penaltyLoan[ 'process_fee_percent' ];
@@ -116,8 +115,6 @@ class Penalty extends CI_Controller
 				$loan_closer_amount = $loan_amount + $interest_amount;
 			}
 
-			
-
 			// set initial emi count
 			$total_emi_count = 1;
 
@@ -141,13 +138,11 @@ class Penalty extends CI_Controller
 
 			$emi_amount = ceil( $loan_closer_amount / $total_emi_count );
 			
-
             // calculate loan last date
             $emi_count = floor( intval( $penaltyLoan[ 'loan_duration' ] ) / $divided_by );
             $emi_count = ( $emi_count >= 1 ) ? $emi_count : 1 ;
 
             $loan_last_date = date( 'Y-m-d' );
-
 
             for( $i = 0; $i < $emi_count; $i++ )
             {
@@ -162,14 +157,13 @@ class Penalty extends CI_Controller
                 }
             }
 
-
 			// calculate loan data End ----
 
-
 			$new_loan['user_id'] = $penaltyLoan['user_id'] ;
-			$new_loan['loan_id'] = $penaltyLoan[ 'lsid' ];
+			$new_loan['loan_id'] = $penaltyLoan[ 'loan_id' ];
 			$new_loan['loan_type'] = $penaltyLoan['loan_type'];
 			$new_loan['amount'] = $loan_amount;
+			$new_loan['initial_amount'] = $loan_amount;
 			$new_loan['rate_of_interest'] = $rate_of_interest;
 			$new_loan['monthly_interest'] = $interest_amount_initial;
 			$new_loan['process_fee_percent'] = $process_fee_percent;
@@ -180,7 +174,7 @@ class Penalty extends CI_Controller
 			$new_loan['bouncing_charges'] = $bouncing_charges;
 			$new_loan['reject_comment'] = 'New Penalty Loan Has Been Created Because Previous Loan Last Date Ended';
 			$new_loan['emi_amount'] = $emi_amount;
-			$new_loan['payable_amt'] = $loan_amount - $processing_fee;
+			$new_loan['payable_amt'] = 0;
 			$new_loan['remaining_balance'] = $loan_closer_amount;
 			$new_loan['loan_closer_amount'] = $loan_closer_amount;
 			$new_loan['deduct_lic_amount'] = $deduct_lic_amount;
@@ -190,18 +184,26 @@ class Penalty extends CI_Controller
             $new_loan['loan_start_date'] = date( 'Y-m-d' );
             $new_loan['loan_last_date'] = $loan_last_date;
 
-
 			if( $new_loan_id = $this->Loan_apply_model->insert( $new_loan ) )
 			{
                 $current_loan_update['child_la_id'] = $new_loan_id;
+
+                if( $penaltyLoan[ 'loan_type' ] == 'GROUP' )
+                {
+                    $current_loan_update['amount'] = abs( intval( $penaltyLoan[ 'remaining_balance' ] ) - intval( $penaltyLoan[ 'loan_closer_amount' ] ) );
+    
+                    $current_loan_update['remaining_balance'] = 0;
+                }
+
                 $current_loan_update['has_extensions'] = 'YES';
                 $current_loan_update['loan_status'] = 'PAID';
                 $current_loan_update['loan_end_date'] = date( 'Y-m-d' );
                 $current_loan_update['reject_comment'] = 'Child Loan Is Created As Penalty Loan Because Loan Duration Ended';
 
-                
                 if( $this->Loan_apply_model->update( $penaltyLoan[ 'la_id' ], $current_loan_update ) )
                 {
+                    $this->Loan_payments_model->mark_all_active_where_loan_id( $penaltyLoan[ 'la_id' ] );
+
                     $insert_loan_payments = [];
 
                     $next_date = date( 'Y-m-d' );
@@ -215,7 +217,6 @@ class Penalty extends CI_Controller
                         else
                         {
                             $next_date = date( 'Y-m-d', strtotime( $next_date." + 1 month" ) );
-
                         }
 
                         $insert_loan_payments[] = [
@@ -224,20 +225,18 @@ class Penalty extends CI_Controller
                             'amount' => $new_loan[ 'emi_amount' ],
                             'initial_amount' => $new_loan[ 'emi_amount' ],
                             'payment_date' => $next_date
-
                         ];
                     }
 
                     $this->Loan_payments_model->insert_batch( $insert_loan_payments );
+
+                    $penaltyLoanCreated++ ;
                 }
-
 			}
-
         }
+        
+        echo "Total $penaltyGenerated Payment Penalty Generated And $penaltyLoanCreated New Penalty Loans Created";
 
-        // get loans that ends today
-        // create new loan with rate of interest etc with amount = remaining amount
-        // create new loan payments 
     }
 }
 

@@ -82,7 +82,7 @@ class Loans extends CI_Controller
         $data[ 'sub_page' ] = 'Loan Payments';
 
         $data[ 'loan' ] = $this->Loan_apply_model->getloandetail2( intval( $loan_id ) );
-        $data[ 'loan_payments' ] = $this->Loan_payments_model->get_all_payments_order_by( intval( $loan_id ) );
+        $data[ 'loan_payments' ] = $this->Loan_payments_model->get_all_payments( intval( $loan_id ) );
 
         $this->load->view( 'manager/loan_payments', $data );
     }

@@ -167,6 +167,7 @@ class Loan extends CI_Controller {
 											<li class="mt-2"><strong>Loan ID : </strong> <?= $la['la_id']?></li>
 											<li class="mt-2"><strong>Loan Type : </strong> <?= $la['loan_type']?></li>
 											<li class="mt-2"><strong>Amount : </strong> <?=( $la['amount']?'₹'. $la['amount']:'NA')?></li>
+											<li class="mt-2"><strong>Initial Amount : </strong> <?=( $la['initial_amount']?'₹'. $la['initial_amount']:'NA')?></li>
 
 											<?php if( in_array( $_POST[ 'page' ], [ 'running_loan', 'paid_loan' ] ) ):?>
 											<li class="mt-2">
@@ -486,6 +487,10 @@ class Loan extends CI_Controller {
 								else if( $payment[ 'amount_received_by' ] == 'ADMIN' )
 								{
 									echo 'ADMIN';
+								}
+								else
+								{
+									echo 'NONE';
 								}
 								
 								?>

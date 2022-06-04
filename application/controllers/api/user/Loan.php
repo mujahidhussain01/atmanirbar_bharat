@@ -200,6 +200,7 @@ class Loan extends REST_Controller
 			$data['loan_id'] = $loan[ 'lsid' ];
 			$data['loan_type'] = 'NORMAL';
 			$data['amount'] = $loan_amount;
+			$data['initial_amount'] = $loan_amount;
 			$data['rate_of_interest'] = $rate_of_interest;
 			$data['monthly_interest'] = $interest_amount_initial;
 			$data['process_fee_percent'] = $process_fee_percent;
@@ -546,6 +547,7 @@ class Loan extends REST_Controller
 		$data['user_id'] = $userdata->userid;
 		$data['loan_type'] = 'MANUAL';
 		$data['amount'] = $loan_amount;
+		$data['initial_amount'] = $loan_amount;
 		$data['rate_of_interest'] = $rate_of_interest;
 		$data['monthly_interest'] = $interest_amount_initial;
 		$data['process_fee_percent'] = $process_fee_percent;

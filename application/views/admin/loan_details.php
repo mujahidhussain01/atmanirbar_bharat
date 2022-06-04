@@ -97,6 +97,13 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td {
 
                             <div class="row col-12">
 
+                                <div class="col-md-6 p-25 border-bottom"> <strong>Initial Amount </strong> </div>
+                                <div class="col-md-6 p-25 border-bottom"><?=( $loan_details['initial_amount']?'₹'. $loan_details['initial_amount']:'NA')?></div>
+
+                            </div>
+
+                            <div class="row col-12">
+
                                 <div class="col-md-6 row">
                                     <div class="col-md-6 p-25 border-bottom"> <strong> Interest In Rupees( Monthly ) </strong> </div>
                                     <div class="col-md-6 p-25 border-bottom"><?=( $loan_details['monthly_interest']?'₹'. $loan_details['monthly_interest']:'NA')?></div>
@@ -122,6 +129,20 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td {
                                 <div class="col-md-6 row">
                                     <div class="col-md-6 p-25 border-bottom"> <strong> Processing Fee </strong> </div>
                                     <div class="col-md-6 p-25 border-bottom">₹<?=( $loan_details['processing_fee'] )?></div>
+                                </div>
+
+                            </div>
+
+                            <div class="row col-12">
+
+                                <div class="col-md-6 row">
+                                    <div class="col-md-6 p-25 border-bottom"> <strong>Bouncing Charges </strong> </div>
+                                    <div class="col-md-6 p-25 border-bottom">₹<?=( $loan_details['bouncing_charges'] )?></div>
+                                </div>
+
+                                <div class="col-md-6 row">
+                                    <div class="col-md-6 p-25 border-bottom"> <strong>Total Bouncing/Penalty Amount</strong> </div>
+                                    <div class="col-md-6 p-25 border-bottom">₹<?=( $loan_details['emi_bounced_amount'] )?></div>
                                 </div>
 
                             </div>

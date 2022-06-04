@@ -193,6 +193,10 @@
                                                     {
                                                         echo 'ADMIN';
                                                     }
+                                                    else
+                                                    {
+                                                        echo 'NONE';
+                                                    }
 
                                                     ?>
                                                 </td>

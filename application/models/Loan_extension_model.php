@@ -66,6 +66,7 @@ class Loan_extension_model extends CI_Model
 la.la_id,
 la.loan_type,
 la.amount,
+la.initial_amount,
 la.rate_of_interest,
 la.processing_fee,
 la.deduct_lic_amount,

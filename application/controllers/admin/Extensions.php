@@ -99,6 +99,7 @@ class Extensions extends CI_Controller {
 				$interest_amount = $interest_amount_initial;
 			}
 			
+			// $processing_fee = ceil( (  $loan_amount / 100 ) * $process_fee_percent );
 			$processing_fee = ceil( ( intval( $loan_extension[ 'ext_amount' ] ) / 100 ) * $process_fee_percent );
 			$bouncing_charges = ceil( ( $loan_amount / 100 ) * $bouncing_charges_percent );
 
@@ -106,7 +107,7 @@ class Extensions extends CI_Controller {
 			
 			if( $deduct_lic_amount == 'YES' )
 			{
-				$one_percent = ceil( intval( $loan_extension[ 'ext_amount' ] ) / 100 );
+				$one_percent = ceil( $loan_amount / 100 );
 				$loan_closer_amount = $loan_amount + $interest_amount + $one_percent;
 			}
 			else
@@ -144,6 +145,7 @@ class Extensions extends CI_Controller {
 			$new_loan['loan_type'] = $current_loan[ 'loan_type' ];
 			$new_loan['manager_id'] = $current_loan[ 'manager_id' ];
 			$new_loan['amount'] = $loan_amount;
+			$new_loan['initial_amount'] = $loan_amount;
 			$new_loan['rate_of_interest'] = $rate_of_interest;
 			$new_loan['monthly_interest'] = $interest_amount_initial;
 			$new_loan['process_fee_percent'] = $process_fee_percent;
@@ -170,6 +172,14 @@ class Extensions extends CI_Controller {
 			}
 
 			$current_loan_update['child_la_id'] = $new_loan_id;
+
+			if( $current_loan[ 'loan_type' ] == 'GROUP' )
+			{
+				$current_loan_update['amount'] = abs( intval( $current_loan[ 'remaining_balance' ] ) - intval( $current_loan[ 'loan_closer_amount' ] ) );
+
+				$current_loan_update['remaining_balance'] = 0;
+			}
+
 			$current_loan_update['has_extensions'] = 'YES';
 			$current_loan_update['loan_status'] = 'PAID';
 			$current_loan_update['loan_end_date'] = date( 'Y-m-d' );

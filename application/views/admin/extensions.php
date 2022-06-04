@@ -53,6 +53,8 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td {
 											<li class="mt-2"><strong>Loan Type : </strong> <?= $la['loan_type']?></li>
 											<li class="mt-2"><strong>Amount : </strong> <?=( $la['amount']?'₹'. $la['amount']:'NA')?></li>
 
+											<li class="mt-2"><strong>Initial Amount : </strong> <?=( $la['initial_amount']?'₹'. $la['initial_amount']:'NA')?></li>
+
 											<li class="mt-2">
 											<strong>Processing Fees : </strong> <?=( $la['processing_fee']?'₹'. $la['processing_fee']:'NA')?>
 											</li>

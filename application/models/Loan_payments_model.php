@@ -51,8 +51,7 @@ class Loan_payments_model extends CI_Model
 
     public function get_all_payments( $loan_apply_id )
     {
-         $this->db->select( $this->table.'.*, ma.name as manager_name');
-
+        $this->db->select( $this->table.'.*, ma.name as manager_name');
 		$this->db->from( $this->table );
 
         $this->db->join( 'managers ma', 'ma.id = loan_payments.manager_id', 'left' );
@@ -61,20 +60,6 @@ class Loan_payments_model extends CI_Model
 		$query = $this->db->get();
 		return $query->result_array();
     }
-
-    public function get_all_payments_order_by( $loan_apply_id )
-    {
-        $this->db->select($this->table.'.*, ma.name as manager_name');
-		$this->db->from( $this->table );
-
-        $this->db->join( 'managers ma', 'ma.id = loan_payments.manager_id', 'left' );
-
-		$this->db->where( 'loan_apply_id', $loan_apply_id );
-		$this->db->order_by( 'loan_payments.status', 'ASC' );
-		$query = $this->db->get();
-		return $query->result_array();
-    }
-
 
     public function get_payments_by_date( $date )
     {
@@ -281,7 +266,7 @@ class Loan_payments_model extends CI_Model
     }
 
 
-    public function get_all_loans_pending_payments()
+    public function get_all_loans_penalty_payments()
     {
         $this->db->select( '*')
 		->from( $this->table )
@@ -300,6 +285,12 @@ class Loan_payments_model extends CI_Model
         $this->db->where( $this->primary_key, $id );
         $this->db->limit( 1 );
         return $this->db->update( $this->table, $data );
+    }
+
+    public function mark_all_active_where_loan_id( $loan_id )
+    {
+        $this->db->where( 'loan_apply_id', intval( $loan_id ) );
+        return $this->db->update( $this->table, [ 'status' => 'ACTIVE' ] );
     }
 
     public function insert($data)

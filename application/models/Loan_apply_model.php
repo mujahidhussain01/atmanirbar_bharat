@@ -103,6 +103,19 @@ class Loan_apply_model extends CI_Model
 		return $query->result_array();
 	}
 
+	
+    public function get_all_penalty_loans()
+    {
+        $this->db->select( '*')
+		->from( $this->table )
+        ->where( 'loan_status', 'RUNNING' )
+        ->where( "str_to_date( loan_last_date, '%Y-%m-%d') < str_to_date( '".date( 'Y-m-d' )."' ,'%Y-%m-%d')" )
+        ->order_by( 'loan_last_date', 'ASC' );
+
+		$query = $this->db->get();
+		return $query->result_array();
+    }
+
 	public function get_loans_list_by_manager_id( $manager_id , $status = false )
 	{
 		$this->db->select("

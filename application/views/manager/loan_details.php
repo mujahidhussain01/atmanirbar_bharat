@@ -55,11 +55,17 @@
                                     </div>
 
                                     <div class="col-12 row m-0 p-0">
+                                        <div class="col-6 p-2 border-bottom"> <strong>Initial Amount </strong> </div>
+                                        <div class="col-6 p-2 border-bottom"><?= ($loan_details['initial_amount'] ? '₹' . $loan_details['amount'] : 'NA') ?></div>
+                                    </div>
+
+                                    <div class="col-12 row m-0 p-0">
                                         <div class="col-6 p-2 border-bottom"> <strong> Rate Of Interest </strong> </div>
                                         <div class="col-6 p-2 border-bottom"><?= $loan_details['rate_of_interest'] ?>%</div>
                                     </div>
 
                                 </div>
+                                
 
                                 <div class="col-12">
 
@@ -88,6 +94,20 @@
                                     <div class="col-12 row m-0 p-0">
                                         <div class="col-6 p-2 border-bottom"> <strong> Processing Fee </strong> </div>
                                         <div class="col-6 p-2 border-bottom">₹<?= ($loan_details['processing_fee']) ?></div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-12">
+
+                                    <div class="col-12 row m-0 p-0">
+                                        <div class="col-6 p-2 border-bottom"> <strong> Bouncing Charges </strong> </div>
+                                        <div class="col-6 p-2 border-bottom">₹<?= ($loan_details['bouncing_charges']) ?></div>
+                                    </div>
+
+                                    <div class="col-12 row m-0 p-0">
+                                        <div class="col-6 p-2 border-bottom"> <strong>Total Bouncing/Penalty Amount</strong> </div>
+                                        <div class="col-6 p-2 border-bottom">₹<?= ($loan_details['emi_bounced_amount']) ?></div>
                                     </div>
 
                                 </div>

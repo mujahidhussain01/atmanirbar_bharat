@@ -23,7 +23,7 @@ class Group_loans_model extends CI_Model
         $this->db->select( '
 		`group_loans`.*,
 
-		COALESCE( ( select  sum( `loan_apply`.`amount` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP" AND has_extensions = "NO" AND ( loan_status in ( "RUNNING", "PAID", "APPROVED" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `total_amount`' )
+		COALESCE( ( select  sum( `loan_apply`.`amount` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP"AND ( loan_status in ( "RUNNING", "PAID", "APPROVED" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `total_amount`' )
 		->from( $this->table );
 
 		if( $search ) $this->db->where( "group_loans.name like '%$search%' " );
@@ -38,9 +38,9 @@ class Group_loans_model extends CI_Model
         $this->db->select( '
 		`group_loans`.*,
 
-		COALESCE( ( select  sum( `loan_apply`.`amount` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP" AND has_extensions = "NO" AND ( loan_status in ( "RUNNING", "PAID", "APPROVED" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `total_amount`,
+		COALESCE( ( select  sum( `loan_apply`.`amount` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP"AND ( loan_status in ( "RUNNING", "PAID", "APPROVED" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `total_amount`,
 
-		COALESCE( ( select  sum( `loan_apply`.`remaining_balance` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP" AND has_extensions = "NO" AND ( loan_status in ( "RUNNING", "PAID" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `remaining_balance`,
+		COALESCE( ( select  sum( `loan_apply`.`remaining_balance` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP"AND ( loan_status in ( "RUNNING", "PAID" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `remaining_balance`,
 
 		COALESCE( ( select  sum( `loan_apply`.`payable_amt` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP" AND ( loan_status in ( "RUNNING", "PAID" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `amount_payed`
 		
@@ -58,9 +58,9 @@ class Group_loans_model extends CI_Model
         $this->db->select( '
 		`group_loans`.*,
 
-		COALESCE( ( select  sum( `loan_apply`.`amount` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP" AND has_extensions = "NO"  AND ( loan_status in ( "RUNNING", "PAID", "APPROVED" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `total_amount`,
+		COALESCE( ( select  sum( `loan_apply`.`amount` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP" AND ( loan_status in ( "RUNNING", "PAID", "APPROVED" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `total_amount`,
 
-		COALESCE( ( select  sum( `loan_apply`.`remaining_balance` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP" AND has_extensions = "NO"  AND ( loan_status in ( "RUNNING", "PAID" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `remaining_balance`,
+		COALESCE( ( select  sum( `loan_apply`.`remaining_balance` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP" AND ( loan_status in ( "RUNNING", "PAID" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `remaining_balance`,
 
 		COALESCE( ( select  sum( `loan_apply`.`payable_amt` ) from `loan_apply` where `loan_apply`.`loan_id` = `group_loans`.`id` AND `loan_apply`.`loan_type` = "GROUP" AND ( loan_status in ( "RUNNING", "PAID" ) ) GROUP BY loan_apply.loan_id ), 0 ) as `amount_payed`
 		

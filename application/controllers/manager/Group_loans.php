@@ -345,6 +345,7 @@ class Group_loans extends CI_Controller
 		$new_group_loan['loan_id'] = $group_loan_info[ 'id' ];
 		$new_group_loan['loan_type'] = 'GROUP';
 		$new_group_loan['amount'] = $loan_amount;
+		$new_group_loan['initial_amount'] = $loan_amount;
 		$new_group_loan['rate_of_interest'] = $rate_of_interest;
 		$new_group_loan['monthly_interest'] = $interest_amount_initial;
 		$new_group_loan['process_fee_percent'] = $process_fee_percent;

@@ -130,17 +130,32 @@
                                             <div class="col-6">
                                                 <small><strong>Status : </strong>Done</small>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-6  d-flex justify-content-end">
                                                 <small><strong>Received : </strong>₹<?= $loan_payment[ 'amount_received' ]?></small>
                                             </div>
                                         </div>
                                         
                                         <div class="row">
                                             <div class="col-6">
-                                                <small><strong>Received By : </strong><?= $loan_payment[ 'amount_received_by' ] == 'MANAGER' ? $loan_payment[ 'manager_name' ].' ( Manager ) ' : 'ADMIN' ?></small>
+                                                <small><strong>Received By : </strong>
+                                                <?php if ( $loan_payment[ 'amount_received_by' ] == 'MANAGER')
+                                                    {
+                                                        echo $loan_payment[ 'manager_name' ].' ( Manager ) ' ;
+                                                    }
+                                                    else if ( $loan_payment[ 'amount_received_by' ] == 'ADMIN')
+                                                    {
+                                                        echo 'ADMIN';
+                                                    }
+                                                    else
+                                                    {
+                                                        echo 'NONE';
+                                                    }
+
+                                                    ?>
+                                                </small>
                                             </div>
-                                            <div class="col-6">
-                                                <small><strong>Received At : </strong><?= date( 'd M Y', strtotime( $loan_payment['amount_received_at'] ) )?></small>
+                                            <div class="col-6 d-flex justify-content-end">
+                                                <small><strong>Received At : </strong><?= $loan_payment['amount_received_at'] ? date( 'd M Y', strtotime( $loan_payment['amount_received_at'] ) ) : ''?></small>
                                             </div>
                                         </div>
                                     <?php else:?>
@@ -149,7 +164,7 @@
                                                 <strong>Status : </strong>Pending
                                             </div>
 
-                                            <div class="col-6">
+                                            <div class="col-6 d-flex justify-content-end">
                                                 <strong>Initial Amount : </strong> ₹<?= $loan_payment['initial_amount'] ?>
                                             </div>
 
