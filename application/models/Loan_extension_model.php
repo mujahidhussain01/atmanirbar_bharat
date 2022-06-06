@@ -131,4 +131,15 @@ le.*,
 		return $query->row_array();
 	}
 
+	public function get_all_extensions_by_loan_id( $loan_id )
+	{
+		$this->db->select('*');
+		$this->db->from('loan_extension');
+		$this->db->where('la_id',$loan_id);
+		$this->db->order_by( 'le_doc', 'DESC' );
+
+		$query = $this->db->get();
+		return $query->row_array();
+	}
+
 }

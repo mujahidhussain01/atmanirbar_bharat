@@ -795,6 +795,41 @@ class Loan extends REST_Controller
 		}
     }
 
+	public function loan_extensions_get()
+	{
+		if( !$this->input->get('token') )
+		{
+			$this->response( [ 'status' => 201, 'error' =>true, 'message' => 'Required parameter is not set' ] );
+		}
+		else
+		{
+			$userdata = $this->User_model->GetUserByToken( $this->input->get( 'token' ) );
+
+			if ( !empty($userdata) )
+			{
+				$this->load->model( 'Loan_extension_model' );
+
+				$result = $this->Loan_extension_model->get_all_extensions_by_loan_id( $userdata->userid );
+
+				$this->response(
+					[
+						'status' => 200,
+						'error' =>false,
+						'data'=>
+						[ 
+							'extensions_list' => $result
+						]
+					]
+				);
+			}
+			else
+			{
+				$message = "Invalid User Token";
+				$this->response(['status' => 201, 'error' => true, 'message' => $message]);
+			}
+		}
+    }
+
 
 	// -------------------------------------------
 }

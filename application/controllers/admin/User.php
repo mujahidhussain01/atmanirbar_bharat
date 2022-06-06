@@ -228,6 +228,8 @@ class User extends CI_Controller
 
 					<th>Mobile</th>
 
+					<th>Profile Image</th>
+
 					<?php if ($bda) { ?>
 
 						<th>Basic&nbsp;Detail&nbsp;Approval</th>
@@ -277,6 +279,8 @@ class User extends CI_Controller
 						<td><?= ($u['city'] ? $u['city'] : 'NA') ?></td>
 
 						<td><?= ($u['mobile'] ? $u['mobile'] : 'NA') ?></td>
+
+						<td><?= ('<button type="button" class="btn btn-' . ($u['profile_image'] ? 'success' :'warning' ).' btn-sm" onclick="getUserDetail(' . $u['userid'] . ',`profile_image`)">View</button>') ?></td>
 
 						<?php if ($bda) { ?>
 
@@ -379,6 +383,59 @@ class User extends CI_Controller
 		// echo $userid;
 
 		$user = $this->User_model->GetUserById($userid);
+
+		if ($_POST['status'] == 'profile_image') { ?>
+
+			<div class="modal-header">
+
+				<h4 class="modal-title">Profile Image</h4>
+
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+			</div>
+
+			<div class="modal-body">
+
+
+				<form onsubmit='return updateUserdetails(this)' method='POST' data-userid='<?= $user->userid ?>'>
+
+					<div class='row'>
+
+						<div class='col-12'>
+
+							<lable>Profile Image</lable>
+
+							<?= ($user->profile_image ? '<a href="' . base_url('uploads/profile_image/' . $user->profile_image) . '" download class="badge badge-info d-flex align-items-center pull-right m-b-10 justify-content-center">Download File <i class="fa fa-download m-l-5"></i></a>' : '') ?>
+
+
+
+							<a data-lightbox="example" href="<?= ($user->profile_image ? base_url('uploads/profile_image/' . $user->profile_image) : base_url('assets/img/image_not_available.png')) ?>">
+
+								<img class="img-thumbnail" src="<?= ($user->profile_image ? base_url('uploads/profile_image/' . $user->profile_image) : base_url('assets/img/image_not_available.png')) ?>">
+
+							</a>
+
+							<div class='form-group m-t-10'>
+
+								<label>Edit Pan Card Image</label>
+
+								<input type="hidden" value="<?= $_POST['status'] ?>" class="form-control" name='doc_type'>
+
+								<input type='file' name='profile_image' class='form-control'>
+
+							</div>
+
+						</div>
+
+						<div class='col-12'>
+							<input type='submit' class='btn btn-info btn-sm pull-right m-t-5 m-b-5' value='Update Data'>
+						</div>
+					</div>
+				</form>
+			</div>
+
+
+		<?php }
 
 		if ($_POST['status'] == 'bda_status') { ?>
 
@@ -1549,6 +1606,42 @@ class User extends CI_Controller
 				}
 
 				$data['adhar_card_front'] = $filename;
+			}
+		}
+
+		if (!empty($_FILES['profile_image']['name'])) {
+
+			// Adhar card front
+
+			$ext = pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
+
+			$filename = 'profile_image_image_' . rand('111111', '999999') . '_' . time() . '.' . $ext;
+
+			$config = array(
+
+				'file_name' => $filename,
+
+				'upload_path' => "./uploads/profile_image/",
+
+				'allowed_types' => "gif|jpg|png|jpeg|svg",
+
+				'overwrite' => TRUE
+
+			);
+
+			$this->upload->initialize($config);
+
+			if ($this->upload->do_upload('profile_image')) {
+
+				if ($userdata->profile_image != NULL) {
+
+					if (file_exists('uploads/profile_image/' . $userdata->profile_image)) {
+
+						unlink('uploads/profile_image/' . $userdata->profile_image);
+					}
+				}
+
+				$data['profile_image'] = $filename;
 			}
 		}
 
