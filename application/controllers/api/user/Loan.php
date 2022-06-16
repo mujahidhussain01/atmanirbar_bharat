@@ -727,7 +727,7 @@ class Loan extends REST_Controller
 			{
 				$this->load->model( 'Loan_payments_model' );
 
-				$result = $this->Loan_payments_model->get_all_payments_order_by( $this->input->get( 'loan_id' ) );
+				$result = $this->Loan_payments_model->get_all_payments( $this->input->get( 'loan_id' ) );
 
 				for( $i=0 ; $i< count( $result ); $i++ )
 				{
@@ -797,9 +797,9 @@ class Loan extends REST_Controller
 
 	public function loan_extensions_get()
 	{
-		if( !$this->input->get('token') )
+		if( !$this->input->get('token') || !$this->input->get( 'loan_id' ))
 		{
-			$this->response( [ 'status' => 201, 'error' =>true, 'message' => 'Required parameter is not set' ] );
+			$this->response( [ 'status' => 201, 'error' =>true, 'message' => 'Required parameter is not set ie: '.( ( !$this->input->get( 'token' ) ) ? 'Token' : 'Loan ID' ) ] );
 		}
 		else
 		{
@@ -807,20 +807,31 @@ class Loan extends REST_Controller
 
 			if ( !empty($userdata) )
 			{
-				$this->load->model( 'Loan_extension_model' );
 
-				$result = $this->Loan_extension_model->get_all_extensions_by_loan_id( $userdata->userid );
+				$loan_details = $this->Loan_apply_model->getSingleLoanById( $this->input->get( 'loan_id' ) );
 
-				$this->response(
-					[
-						'status' => 200,
-						'error' =>false,
-						'data'=>
-						[ 
-							'extensions_list' => $result
+				if( !empty( $loan_details ) )
+				{
+					$this->load->model( 'Loan_extension_model' );
+					
+					$result = $this->Loan_extension_model->get_all_extensions_by_loan_id( $loan_details[ 'la_id' ] );
+					
+					$this->response(
+						[
+							'status' => 200,
+							'error' =>false,
+							'data'=>
+							[ 
+								'extensions_list' => $result
+							]
 						]
-					]
-				);
+					);
+				}
+				else
+				{
+					$message = "Invalid Loan ID";
+					$this->response(['status' => 201, 'error' => true, 'message' => $message]);
+				}
 			}
 			else
 			{
