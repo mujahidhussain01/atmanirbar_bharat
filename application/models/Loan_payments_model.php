@@ -202,6 +202,7 @@ class Loan_payments_model extends CI_Model
         $this->db->select('
                 loan_payments.id,
                 loan_payments.user_id,
+                loan_payments.initial_amount,
                 loan_payments.loan_apply_id,
                 loan_payments.amount_received_by,
                 ma.name as manager_name,
