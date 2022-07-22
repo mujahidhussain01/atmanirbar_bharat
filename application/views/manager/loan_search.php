@@ -49,7 +49,7 @@
             <div class="row">
                 <form method="get" class="col-12 row pr-0" action="<?php echo base_url('manager/'.( $this->uri->segment('4') ? 'loans/index/'.$this->uri->segment('4') : 'loans' )) ?>">
                     <div class="col-12 d-flex">
-                        <input type="text" required name="search" class="form-control" id="search" placeholder="Search Loans By User Name">
+                        <input type="text" required name="search" class="form-control" id="search" placeholder="Search Loans By User Name"  value="<?= $this->input->get( 'search' )?>">
                         <button type="submit" class="btn btn-primary ml-1"><i class="fa fa-search"></i></button>
                     </div>
                 </form>

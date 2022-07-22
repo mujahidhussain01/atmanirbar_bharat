@@ -291,13 +291,13 @@ class User_model extends CI_model{
 	    return $query->row_array();
 	 }
 	 
-	 public function getusersByStatusByDateRange($status,$minvalue,$maxvalue){
+	 public function getusersByStatusByDateRange($status,$minvalue,$maxvalue, $addFilter = false){
 
         if($status=='ALL')
         {
             $this->db->select('*');
             $this->db->from($this->table);
-            $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
+            if( $addFilter ) $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
             $query = $this->db->get();
             return $query->result_array();
         }
@@ -311,7 +311,7 @@ class User_model extends CI_model{
             pan_card_approved_status = "NOT_AVAILABLE" AND 
             docv_status = "NOT_AVAILABLE" AND 
             passbook_approved_status = "NOT_AVAILABLE")');
-            $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
+            if( $addFilter ) $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
             $query = $this->db->get();
             return $query->result_array();
         }
@@ -325,7 +325,7 @@ class User_model extends CI_model{
             pan_card_approved_status = "PENDING" OR 
             docv_status = "PENDING" OR 
             passbook_approved_status = "PENDING")');
-            $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
+            if( $addFilter ) $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
             $query = $this->db->get();
             return $query->result_array();
         }
@@ -339,7 +339,7 @@ class User_model extends CI_model{
         //     pan_card_approved_status = "PENDING" AND 
         //     docv_status = "PENDING" AND 
         //     passbook_approved_status = "PENDING")');
-        //     $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
+        //     if( $addFilter ) $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
         //     $query = $this->db->get();
         //     return $query->result_array();
         // }
@@ -353,7 +353,7 @@ class User_model extends CI_model{
         //     pan_card_approved_status = "NOT_AVAILABLE" OR 
         //     docv_status = "NOT_AVAILABLE" OR 
         //     passbook_approved_status = "NOT_AVAILABLE")');
-        //     $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
+        //     if( $addFilter ) $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
         //     $query = $this->db->get();
         //     return $query->result_array();
         // }
@@ -365,7 +365,7 @@ class User_model extends CI_model{
             $this->db->from($this->table);
             $this->db->where('status','ACTIVE');
             $this->db->where('(bda_status = "REJECTED" OR pan_card_approved_status = "REJECTED" OR docv_status = "REJECTED" OR passbook_approved_status = "REJECTED")');
-            $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
+            if( $addFilter ) $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
             $query = $this->db->get();
             return $query->result_array();
         }
@@ -376,7 +376,7 @@ class User_model extends CI_model{
             $this->db->from($this->table);
             $this->db->where('status','ACTIVE');
             $this->db->where('(bda_status = "APPROVED" AND pan_card_approved_status = "APPROVED" AND docv_status = "APPROVED" AND passbook_approved_status = "APPROVED")');
-            $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
+            if( $addFilter ) $this->db->where("userCreationDate BETWEEN '$minvalue' AND '$maxvalue'");
             $query = $this->db->get();
             return $query->result_array();
             

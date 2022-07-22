@@ -142,11 +142,13 @@
 
         cb(start, end);
 
+        var addFilter = false;
+
         function getusersdata(){   
 
             var date_range=$('#date_range_sel').html();
 
-            var data = {date_range:date_range,page:'<?=$sub_page?>'};
+            var data = {date_range:date_range,page:'<?=$sub_page?>',add_filter:addFilter};
 
             $.ajax({
 
@@ -159,6 +161,7 @@
                 success:function(data)
 
                 { 
+                    addFilter = true;
 
                     $('#filterdata').html(data);
 

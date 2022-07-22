@@ -41,7 +41,7 @@ class Loans extends CI_Controller
 
         if( $search = trim( $this->input->get( 'search', true ) ))
         {
-            $where = "( u.first_name like '%$search%' OR u.last_name like '%$search%' ) ";
+            $where = "( concat( u.first_name, ' ', u.last_name ) LIKE '%$search%' ) ";
         }
         else
         {

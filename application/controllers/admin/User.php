@@ -171,7 +171,7 @@ class User extends CI_Controller
 
 		$maxvalue = date('Y-m-d', strtotime($daterange[1])) . ' 23:59:00';
 
-
+		$addFilter = $_POST[ 'add_filter' ] ?? false;
 
 		$bda = true;
 
@@ -185,27 +185,27 @@ class User extends CI_Controller
 
 		if ($_POST['page'] == 'all_users') {
 
-			$users = $this->User_model->getusersByStatusByDateRange('ALL', $minvalue, $maxvalue);
+			$users = $this->User_model->getusersByStatusByDateRange('ALL', $minvalue, $maxvalue,$addFilter);
 		}
 
 		if ($_POST['page'] == 'pending_users') {
 
-			$users = $this->User_model->getusersByStatusByDateRange('PENDING', $minvalue, $maxvalue);
+			$users = $this->User_model->getusersByStatusByDateRange('PENDING', $minvalue, $maxvalue,$addFilter);
 		}
 
 		if ($_POST['page'] == 'document_pending') {
 
-			$users = $this->User_model->getusersByStatusByDateRange('DPENDING', $minvalue, $maxvalue);
+			$users = $this->User_model->getusersByStatusByDateRange('DPENDING', $minvalue, $maxvalue,$addFilter);
 		}
 
 		if ($_POST['page'] == 'approved_users') {
 
-			$users = $this->User_model->getusersByStatusByDateRange('APPROVED', $minvalue, $maxvalue);
+			$users = $this->User_model->getusersByStatusByDateRange('APPROVED', $minvalue, $maxvalue,$addFilter);
 		}
 
 		if ($_POST['page'] == 'rejected_users') {
 
-			$users = $this->User_model->getusersByStatusByDateRange('REJECTED', $minvalue, $maxvalue);
+			$users = $this->User_model->getusersByStatusByDateRange('REJECTED', $minvalue, $maxvalue,$addFilter);
 		}
 
 
